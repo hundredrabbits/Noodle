@@ -50,7 +50,7 @@ function Noodle () {
 
   this.drag = (a, b) => {
     const imageData = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
-    this.context.putImageData(imageData, b.x - a.x, b.y - a.y)
+    this.context.putImageData(imageData, Math.floor((b.x - a.x) / 3) * 3, Math.floor((b.y - a.y) / 3) * 3)
     cursor.a.x = b.x
     cursor.a.y = b.y
   }
