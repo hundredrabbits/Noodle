@@ -97,6 +97,10 @@ function Noodle () {
     if (e.key === 'Shift') {
       this.context.fillStyle = 'black'
     }
+    if (e.key === 'Escape') {
+      this.context.clearRect(0, 0, window.innerWidth, window.innerHeight)
+    }
+    console.log(e)
   }
 
   this.onKeyPress = (e) => {
