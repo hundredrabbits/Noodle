@@ -25,8 +25,8 @@ function Noodle () {
   }
 
   this.fit = function (size = { w: window.innerWidth, h: window.innerHeight }) {
-    this.el.width = (size.w * this.ratio) 
-    this.el.height = (size.h * this.ratio)
+    this.el.width = size.w
+    this.el.height = size.h
     this.el.style.width = size.w + 'px'
     this.el.style.height = size.h + 'px'
   }
