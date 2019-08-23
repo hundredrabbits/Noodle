@@ -3,6 +3,8 @@ function Noodle () {
   this.context = this.el.getContext('2d')
   this.ratio = window.devicePixelRatio
 
+  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 } }
+
   this.install = function (host) {
     host.appendChild(this.el)
 
@@ -35,21 +37,16 @@ function Noodle () {
 
   this.trace = function (a, b) {
     const dx = Math.abs(b.x - a.x)
-    const sx = a.x < b.x ? 1 : -1
     const dy = -Math.abs(b.y - a.y)
-    const sy = a.y < b.y ? 1 : -1
-    let err = dx + dy; let e2 /* error value e_xy */
-    for (;;) { /* loop */
+    let err = dx + dy; let e2
+    for (;;) {
       this.context.fillRect(a.x, a.y, 1, 1)
-      if (a.x === b.x && a.y === b.y) break
+      if (a.x === b.x && a.y === b.y) { break }
       e2 = 2 * err
-      if (e2 >= dy) { err += dy; a.x += sx } /* x step */
-      if (e2 <= dx) { err += dx; a.y += sy } /* y step */
+      if (e2 >= dy) { err += dy; a.x += (a.x < b.x ? 1 : -1) }
+      if (e2 <= dx) { err += dx; a.y += (a.y < b.y ? 1 : -1) }
     }
   }
-  // Cursor
-
-  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 } }
 
   // Events
 
