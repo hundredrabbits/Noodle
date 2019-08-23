@@ -48,9 +48,11 @@ function Noodle () {
     }
   }
 
-  this.drag = function (a, b) {
-    // var imageData = context.getImageData(1, 0, context.canvas.width-1, context.canvas.height);
-    // context.putImageData(imageData, 0, 0);
+  this.drag = (a, b) => {
+    const imageData = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
+    this.context.putImageData(imageData, b.x - a.x, b.y - a.y)
+    cursor.a.x = b.x
+    cursor.a.y = b.y
   }
 
   // Events
@@ -91,12 +93,18 @@ function Noodle () {
     if (e.key === 'Shift') {
       cursor.color = 'white'
     }
+    if (e.key === 'Alt') {
+      cursor.mode = this.drag
+    }
     this.context.fillStyle = cursor.color
   }
 
   this.onKeyUp = (e) => {
     if (e.key === 'Shift') {
       cursor.color = 'black'
+    }
+    if (e.key === 'Alt') {
+      cursor.mode = this.trace
     }
     if (e.key === 'Escape') {
       this.context.clearRect(0, 0, window.innerWidth, window.innerHeight)
