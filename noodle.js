@@ -3,7 +3,7 @@ function Noodle () {
   this.context = this.el.getContext('2d')
   this.ratio = window.devicePixelRatio
 
-  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 } }
+  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, mode: null, color: 'black' }
 
   this.install = function (host) {
     host.appendChild(this.el)
@@ -16,7 +16,6 @@ function Noodle () {
     window.addEventListener('mouseout', this.onMouseOut, false)
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
-    window.addEventListener('keypress', this.onKeyPress, false)
     window.addEventListener('contextmenu', this.onMouseUp, false)
 
     this.fit()
@@ -24,6 +23,7 @@ function Noodle () {
 
   this.start = function () {
     this.fit()
+    cursor.mode = this.trace
   }
 
   this.fit = function (size = { w: window.innerWidth, h: window.innerHeight }) {
@@ -33,9 +33,9 @@ function Noodle () {
     this.el.style.height = size.h + 'px'
   }
 
-  //
+  // Modes
 
-  this.trace = function (a, b) {
+  this.trace = (a, b) => {
     const dx = Math.abs(b.x - a.x)
     const dy = -Math.abs(b.y - a.y)
     let err = dx + dy; let e2
@@ -48,13 +48,18 @@ function Noodle () {
     }
   }
 
+  this.drag = function (a, b) {
+    // var imageData = context.getImageData(1, 0, context.canvas.width-1, context.canvas.height);
+    // context.putImageData(imageData, 0, 0);
+  }
+
   // Events
 
   this.onMouseDown = (e) => {
     cursor.z = 1
     cursor.a.x = e.clientX
     cursor.a.y = e.clientY
-    this.trace(cursor.a, cursor.a)
+    cursor.mode(cursor.a, cursor.a)
     e.preventDefault()
   }
 
@@ -62,8 +67,7 @@ function Noodle () {
     if (cursor.z !== 1) { return }
     cursor.b.x = e.clientX
     cursor.b.y = e.clientY
-
-    this.trace(cursor.a, cursor.b)
+    cursor.mode(cursor.a, cursor.b)
     e.preventDefault()
   }
 
@@ -71,8 +75,7 @@ function Noodle () {
     cursor.z = 0
     cursor.b.x = e.clientX
     cursor.b.y = e.clientY
-
-    this.trace(cursor.a, cursor.b)
+    cursor.mode(cursor.a, cursor.b)
     e.preventDefault()
   }
 
@@ -86,18 +89,19 @@ function Noodle () {
 
   this.onKeyDown = (e) => {
     if (e.key === 'Shift') {
-      this.context.fillStyle = 'white'
+      cursor.color = 'white'
     }
+    this.context.fillStyle = cursor.color
   }
 
   this.onKeyUp = (e) => {
     if (e.key === 'Shift') {
-      this.context.fillStyle = 'black'
+      cursor.color = 'black'
     }
     if (e.key === 'Escape') {
       this.context.clearRect(0, 0, window.innerWidth, window.innerHeight)
     }
-    console.log(e)
+    this.context.fillStyle = cursor.color
   }
 
   this.onKeyPress = (e) => {
