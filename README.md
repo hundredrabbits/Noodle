@@ -6,13 +6,14 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 ## Controls
 
-- `escape` erase all.
-- `hold shift` erase brush.
-- `right click` draw a line between two points.
+- `escape` clear.
+- `hold shift` erase.
+- `left click` draw.
+- `right click` line.
 - `alt click` drag content.
+- `ctrl click` half-tone.
 
 ## TODOs
 
-- `ctrl` half-tone.
 - `cmd s` export.
 - `drag over` import.

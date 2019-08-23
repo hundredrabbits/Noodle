@@ -55,6 +55,17 @@ function Noodle () {
     cursor.a.y = b.y
   }
 
+  this.tone = (a, b) => {
+    for (let x = 0; x <= b.x - a.x; x++) {
+      for (let y = 0; y <= b.y - a.y; y++) {
+        const pos = { x: a.x + x, y: a.y + y }
+        if (pos.x % 3 === 0 && pos.y % 3 === 0) {
+          this.context.fillRect(pos.x, pos.y, 1, 1)
+        }
+      }
+    }
+  }
+
   // Events
 
   this.onMouseDown = (e) => {
@@ -96,6 +107,9 @@ function Noodle () {
     if (e.key === 'Alt') {
       cursor.mode = this.drag
     }
+    if (e.key === 'Control') {
+      cursor.mode = this.tone
+    }
     this.context.fillStyle = cursor.color
   }
 
@@ -104,6 +118,9 @@ function Noodle () {
       cursor.color = 'black'
     }
     if (e.key === 'Alt') {
+      cursor.mode = this.trace
+    }
+    if (e.key === 'Control') {
       cursor.mode = this.trace
     }
     if (e.key === 'Escape') {
