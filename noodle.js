@@ -108,6 +108,6 @@ function Noodle () {
   }
 
   this.onResize = (e) => {
-    this.fit()
+    // this.fit()
   }
 }
