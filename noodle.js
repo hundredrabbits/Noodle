@@ -15,16 +15,18 @@ function Noodle () {
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
     window.addEventListener('keypress', this.onKeyPress, false)
+    window.addEventListener('contextmenu', this.onMouseUp, false)
 
     this.fit()
   }
 
   this.start = function () {
+    this.fit()
   }
 
   this.fit = function (size = { w: window.innerWidth, h: window.innerHeight }) {
-    this.el.width = size.w * this.ratio
-    this.el.height = size.h * this.ratio
+    this.el.width = (size.w * this.ratio) / 2
+    this.el.height = (size.h * this.ratio) / 2
     this.el.style.width = size.w + 'px'
     this.el.style.height = size.h + 'px'
   }
@@ -56,6 +58,7 @@ function Noodle () {
     cursor.a.x = e.clientX
     cursor.a.y = e.clientY
     this.trace(cursor.a, cursor.a)
+    e.preventDefault()
   }
 
   this.onMouseMove = (e) => {
@@ -64,6 +67,7 @@ function Noodle () {
     cursor.b.y = e.clientY
 
     this.trace(cursor.a, cursor.b)
+    e.preventDefault()
   }
 
   this.onMouseUp = (e) => {
@@ -72,6 +76,7 @@ function Noodle () {
     cursor.b.y = e.clientY
 
     this.trace(cursor.a, cursor.b)
+    e.preventDefault()
   }
 
   this.onMouseOver = (e) => {
@@ -83,11 +88,15 @@ function Noodle () {
   }
 
   this.onKeyDown = (e) => {
-
+    if (e.key === 'Shift') {
+      this.context.fillStyle = 'white'
+    }
   }
 
   this.onKeyUp = (e) => {
-
+    if (e.key === 'Shift') {
+      this.context.fillStyle = 'black'
+    }
   }
 
   this.onKeyPress = (e) => {
