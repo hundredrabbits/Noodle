@@ -5,7 +5,7 @@ function Noodle () {
   this.context = this.el.getContext('2d')
   this.ratio = window.devicePixelRatio
 
-  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, mode: null, color: 'black' }
+  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, size: 10, mode: null, color: 'black' }
 
   this.install = function (host) {
     host.appendChild(this.el)
@@ -45,6 +45,21 @@ function Noodle () {
       if (e2 >= dy) { err += dy; a.x += (a.x < b.x ? 1 : -1) }
       if (e2 <= dx) { err += dx; a.y += (a.y < b.y ? 1 : -1) }
     }
+  }
+
+  this.circle = (r = cursor.size) => {
+    let x = -r
+    let y = 0
+    let err = 2 - 2 * r
+    do {
+      this.context.fillRect(cursor.b.x - x, cursor.b.y + y, 1, 1)
+      this.context.fillRect(cursor.b.x - y, cursor.b.y - x, 1, 1)
+      this.context.fillRect(cursor.b.x + x, cursor.b.y - y, 1, 1)
+      this.context.fillRect(cursor.b.x + y, cursor.b.y + x, 1, 1)
+      r = err
+      if (r <= y) err += ++y * 2 + 1
+      if (r > x || err > y) err += ++x * 2 + 1
+    } while (x < 0)
   }
 
   this.drag = (a, b) => {
@@ -101,6 +116,11 @@ function Noodle () {
     if (e.key === 'Control') {
       cursor.mode = this.tone
     }
+    // Stamps
+    if (e.key === '1') {
+      this.circle()
+    }
+
     this.context.fillStyle = cursor.color
   }
 
