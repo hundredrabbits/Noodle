@@ -120,6 +120,12 @@ function Noodle () {
     if (e.key === '1') {
       this.circle()
     }
+    if (e.key === '[') {
+      cursor.size -= 1
+    }
+    if (e.key === ']') {
+      cursor.size += 1
+    }
 
     this.context.fillStyle = cursor.color
   }
