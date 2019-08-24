@@ -7,7 +7,7 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 ## Controls
 
 - `escape` clear.
-- `hold shift` erase.
+- `shift click` erase.
 - `left click` draw.
 - `right click` line.
 - `alt click` drag content.
