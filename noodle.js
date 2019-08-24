@@ -1,3 +1,5 @@
+'us strict'
+
 function Noodle () {
   this.el = document.createElement('canvas')
   this.context = this.el.getContext('2d')
@@ -8,12 +10,9 @@ function Noodle () {
   this.install = function (host) {
     host.appendChild(this.el)
 
-    window.addEventListener('resize', this.onResize, false)
     window.addEventListener('mousedown', this.onMouseDown, false)
     window.addEventListener('mousemove', this.onMouseMove, false)
     window.addEventListener('mouseup', this.onMouseUp, false)
-    window.addEventListener('mouseover', this.onMouseOver, false)
-    window.addEventListener('mouseout', this.onMouseOut, false)
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
     window.addEventListener('contextmenu', this.onMouseUp, false)
@@ -92,14 +91,6 @@ function Noodle () {
     e.preventDefault()
   }
 
-  this.onMouseOver = (e) => {
-
-  }
-
-  this.onMouseOut = (e) => {
-
-  }
-
   this.onKeyDown = (e) => {
     if (e.key === 'Shift') {
       cursor.color = 'white'
@@ -126,14 +117,29 @@ function Noodle () {
     if (e.key === 'Escape') {
       this.context.clearRect(0, 0, window.innerWidth, window.innerHeight)
     }
+    if (e.key === 's') {
+      grab(this.el.toDataURL('image/png'))
+    }
     this.context.fillStyle = cursor.color
   }
 
-  this.onKeyPress = (e) => {
+  window.addEventListener('paste', async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    for (const item of e.clipboardData.items) {
+      if (item.type.indexOf('image') < 0) { continue }
+      const img = new Image()
+      img.onload = () => {
+        this.context.drawImage(img, 0, 0)
+      }
+      img.src = URL.createObjectURL(item.getAsFile())
+    }
+  })
 
-  }
-
-  this.onResize = (e) => {
-    // this.fit()
+  function grab (base64, name = 'export.png') {
+    const link = document.createElement('a')
+    link.setAttribute('href', base64)
+    link.setAttribute('download', name)
+    link.dispatchEvent(new MouseEvent(`click`, { bubbles: true, cancelable: true, view: window }))
   }
 }

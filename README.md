@@ -12,8 +12,5 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 - `right click` line.
 - `alt click` drag content.
 - `ctrl click` half-tone.
-
-## TODOs
-
-- `cmd s` export.
-- `drag over` import.
+- `s` export.
+- `paste` import.
