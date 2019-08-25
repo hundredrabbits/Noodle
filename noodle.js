@@ -22,6 +22,7 @@ function Noodle () {
 
   this.start = function () {
     this.fit()
+    this.fill()
     cursor.mode = this.trace
   }
 
@@ -30,6 +31,12 @@ function Noodle () {
     this.el.height = size.h
     this.el.style.width = size.w + 'px'
     this.el.style.height = size.h + 'px'
+  }
+
+  this.fill = () => {
+    this.context.fillStyle = 'white'
+    this.context.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    this.context.fillStyle = 'black'
   }
 
   // Modes
@@ -141,7 +148,7 @@ function Noodle () {
       cursor.mode = this.trace
     }
     if (e.key === 'Escape') {
-      this.context.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      this.fill()
     }
     if (e.key === 's') {
       grab(this.el.toDataURL('image/png'))
