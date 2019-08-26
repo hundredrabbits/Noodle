@@ -31,7 +31,8 @@
 
     -->
     <script>
-      const noodle = new Noodle()
+      const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, size: 12, mode: null, color: 'black' }
+      const noodle = new Noodle(cursor)
       noodle.install(document.body)
       window.addEventListener('load', (e) => { 
         noodle.start()

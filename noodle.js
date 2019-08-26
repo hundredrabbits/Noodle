@@ -1,22 +1,20 @@
 'us strict'
 
+/* global cursor */
+
 function Noodle () {
   this.el = document.createElement('canvas')
   this.context = this.el.getContext('2d')
   this.ratio = window.devicePixelRatio
 
-  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, size: 12, mode: null, color: 'black' }
-
   this.install = function (host) {
     host.appendChild(this.el)
-
     window.addEventListener('mousedown', this.onMouseDown, false)
     window.addEventListener('mousemove', this.onMouseMove, false)
     window.addEventListener('mouseup', this.onMouseUp, false)
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
     window.addEventListener('contextmenu', this.onMouseUp, false)
-
     this.fit()
   }
 
@@ -58,7 +56,7 @@ function Noodle () {
   }
 
   this.set = (mode = 'trace') => {
-    if (!this[mode]) { console.warn('Unknown mode: ', mode); return }
+    if (!this[mode]) { return }
     document.title = `Noode — ${mode}[${window.innerWidth}x${window.innerHeight}]`
     cursor.mode = this[mode]
   }
@@ -79,8 +77,8 @@ function Noodle () {
   }
 
   this.drag = (a, b) => {
-    const imageData = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
-    this.context.putImageData(imageData, parseInt((b.x - a.x) / 6) * 6, parseInt((b.y - a.y) / 6) * 6)
+    const data = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
+    this.context.putImageData(data, step((b.x - a.x) * 2, 6), step((b.y - a.y) * 2, 6))
     cursor.a.x = b.x
     cursor.a.y = b.y
   }
@@ -200,5 +198,9 @@ function Noodle () {
     link.setAttribute('href', base64)
     link.setAttribute('download', name)
     link.dispatchEvent(new MouseEvent(`click`, { bubbles: true, cancelable: true, view: window }))
+  }
+
+  function step (val, len) {
+    return parseInt(val / len) * len
   }
 }
