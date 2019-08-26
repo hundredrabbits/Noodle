@@ -90,6 +90,15 @@ function Noodle () {
     }
   }
 
+  this.erase = (a, b) => {
+    for (let x = 0; x <= cursor.size; x++) {
+      for (let y = 0; y <= cursor.size; y++) {
+        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
+        this.context.fillRect(pos.x, pos.y, 1, 1)
+      }
+    }
+  }
+
   // Events
 
   this.onMouseDown = (e) => {
