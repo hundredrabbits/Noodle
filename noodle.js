@@ -59,7 +59,7 @@ function Noodle () {
 
   this.set = (mode = 'trace') => {
     if (!this[mode]) { console.warn('Unknown mode: ', mode); return }
-    document.title = `Noode — ${mode}`
+    document.title = `Noode — ${mode}[${window.innerWidth}x${window.innerHeight}]`
     cursor.mode = this[mode]
   }
 
