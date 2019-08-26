@@ -80,7 +80,7 @@ function Noodle () {
 
   this.drag = (a, b) => {
     const imageData = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
-    this.context.putImageData(imageData, parseInt((b.x - a.x) / 3) * 3, parseInt((b.y - a.y) / 3) * 3)
+    this.context.putImageData(imageData, parseInt((b.x - a.x) / 6) * 6, parseInt((b.y - a.y) / 6) * 6)
     cursor.a.x = b.x
     cursor.a.y = b.y
   }
@@ -100,13 +100,18 @@ function Noodle () {
     }
   }
 
-  this.erase = (a, b) => {
+  this.block = (a, b) => {
     for (let x = 0; x <= cursor.size; x++) {
       for (let y = 0; y <= cursor.size; y++) {
         const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
         this.context.fillRect(pos.x, pos.y, 1, 1)
       }
     }
+  }
+
+  this.line = (a, b) => {
+    if (cursor.z !== 0) { return }
+    this.trace(a, b)
   }
 
   // Events
@@ -147,8 +152,10 @@ function Noodle () {
     } else if (e.key === '2') {
       this.set('tone')
     } else if (e.key === '3') {
-      this.set('erase')
+      this.set('block')
     } else if (e.key === '4') {
+      this.set('line')
+    } else if (e.key === '5') {
       this.set('drag')
     } else if (e.key === 'i') {
       this.invert()

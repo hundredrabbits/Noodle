@@ -8,9 +8,9 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 ### Left Click
 
-- `l-click` draw.
+- `l-click` color/black.
+- `shift l-click` color/white.
 - `meta l-click` tone.
-- `shift l-click` erase.
 - `alt l-click` drag.
 
 ### Right Click
@@ -21,8 +21,9 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 - `1` trace mode.
 - `2` tone mode.
-- `3` erase mode.
-- `4` drag mode.
+- `3` block mode.
+- `4` line mode.
+- `5` drag mode.
 
 ### Mods
 
