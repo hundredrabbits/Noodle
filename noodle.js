@@ -78,13 +78,6 @@ function Noodle () {
     }
   }
 
-  this.drag = (a, b) => {
-    const data = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
-    this.context.putImageData(data, step((b.x - a.x) * 2, 6), step((b.y - a.y) * 2, 6))
-    cursor.a.x = b.x
-    cursor.a.y = b.y
-  }
-
   this.tone = (a, b) => {
     for (let x = 0; x <= cursor.size; x++) {
       for (let y = 0; y <= cursor.size; y++) {
@@ -114,6 +107,13 @@ function Noodle () {
     this.trace(a, b)
   }
 
+  this.drag = (a, b) => {
+    const data = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
+    this.context.putImageData(data, step((b.x - a.x) * 2, 6), step((b.y - a.y) * 2, 6))
+    cursor.a.x = b.x
+    cursor.a.y = b.y
+  }
+  
   this.noodle = (a, b, r = cursor.size) => {
     let x = -r
     let y = 0
