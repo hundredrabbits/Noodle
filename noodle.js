@@ -57,7 +57,7 @@ function Noodle () {
 
   this.set = (mode = 'trace') => {
     if (!this[mode]) { return }
-    document.title = `Noode — ${mode}[${window.innerWidth}x${window.innerHeight}]`
+    document.title = `Noodle — ${mode}[${window.innerWidth}x${window.innerHeight}]`
     cursor.mode = this[mode]
   }
 
