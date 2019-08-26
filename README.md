@@ -6,11 +6,27 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 ## Controls
 
-- `escape` clear.
-- `shift click` erase.
-- `left click` draw.
+### Left Click
+
+- `l-click` draw.
+- `meta l-click` tone.
+- `shift l-click` erase.
+- `alt l-click` drag.
+
+### Right Click
+
 - `right click` line.
-- `alt click` drag content.
-- `ctrl click` half-tone.
+
+### Sticky
+
+- `1` trace mode.
+- `2` tone mode.
+- `3` erase mode.
+
+### Mods
+
+- `i` invert.
+- `x` flip.
 - `s` export.
+- `escape` clear.
 - `paste` import.

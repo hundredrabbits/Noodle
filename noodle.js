@@ -5,7 +5,7 @@ function Noodle () {
   this.context = this.el.getContext('2d')
   this.ratio = window.devicePixelRatio
 
-  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, size: 10, mode: null, color: 'black' }
+  const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, size: 12, mode: null, color: 'black' }
 
   this.install = function (host) {
     host.appendChild(this.el)
@@ -33,10 +33,28 @@ function Noodle () {
     this.el.style.height = size.h + 'px'
   }
 
-  this.fill = () => {
+  this.fill = (color = 'white') => {
+    this.context.save()
+    this.context.fillStyle = color
+    this.context.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    this.context.restore()
+  }
+
+  this.invert = () => {
+    this.context.save()
+    this.context.drawImage(this.el, 0, 0)
+    this.context.globalCompositeOperation = 'difference'
     this.context.fillStyle = 'white'
     this.context.fillRect(0, 0, window.innerWidth, window.innerHeight)
-    this.context.fillStyle = 'black'
+    this.context.restore()
+  }
+
+  this.flip = () => {
+    this.context.save()
+    this.context.translate(window.innerWidth, 0)
+    this.context.scale(-1, 1)
+    this.context.drawImage(this.el, 0, 0)
+    this.context.restore()
   }
 
   // Modes
@@ -54,21 +72,6 @@ function Noodle () {
     }
   }
 
-  this.circle = (r = cursor.size) => {
-    let x = -r
-    let y = 0
-    let err = 2 - 2 * r
-    do {
-      this.context.fillRect(cursor.b.x - x, cursor.b.y + y, 1, 1)
-      this.context.fillRect(cursor.b.x - y, cursor.b.y - x, 1, 1)
-      this.context.fillRect(cursor.b.x + x, cursor.b.y - y, 1, 1)
-      this.context.fillRect(cursor.b.x + y, cursor.b.y + x, 1, 1)
-      r = err
-      if (r <= y) err += ++y * 2 + 1
-      if (r > x || err > y) err += ++x * 2 + 1
-    } while (x < 0)
-  }
-
   this.drag = (a, b) => {
     const imageData = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
     this.context.putImageData(imageData, Math.floor((b.x - a.x) / 3) * 3, Math.floor((b.y - a.y) / 3) * 3)
@@ -77,9 +80,9 @@ function Noodle () {
   }
 
   this.tone = (a, b) => {
-    for (let x = 0; x <= b.x - a.x; x++) {
-      for (let y = 0; y <= b.y - a.y; y++) {
-        const pos = { x: a.x + x, y: a.y + y }
+    for (let x = 0; x <= cursor.size; x++) {
+      for (let y = 0; y <= cursor.size; y++) {
+        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
         if (pos.x % 3 === 0 && pos.y % 3 === 0) {
           this.context.fillRect(pos.x, pos.y, 1, 1)
         }
@@ -116,41 +119,36 @@ function Noodle () {
   this.onKeyDown = (e) => {
     if (e.key === 'Shift') {
       cursor.color = 'white'
-    }
-    if (e.key === 'Alt') {
+    } else if (e.key === 'Alt') {
       cursor.mode = this.drag
-    }
-    if (e.key === 'Control') {
+    } else if (e.key === 'Control' || e.key === 'Meta') {
       cursor.mode = this.tone
-    }
-    // Stamps
-    if (e.key === '1') {
-      this.circle()
-    }
-    if (e.key === '[') {
+    } else if (e.key === '1') {
+      cursor.mode = this.trace
+    } else if (e.key === '2') {
+      cursor.mode = this.tone
+    } else if (e.key === '3') {
+      cursor.mode = this.erase
+    } else if (e.key === 'i') {
+      this.invert()
+    } else if (e.key === 'x') {
+      this.flip()
+    } else if (e.key === '[' && cursor.size > 0) {
       cursor.size -= 1
-    }
-    if (e.key === ']') {
+    } else if (e.key === ']' && cursor.size < 100) {
       cursor.size += 1
     }
-
     this.context.fillStyle = cursor.color
   }
 
   this.onKeyUp = (e) => {
     if (e.key === 'Shift') {
       cursor.color = 'black'
-    }
-    if (e.key === 'Alt') {
+    } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta') {
       cursor.mode = this.trace
-    }
-    if (e.key === 'Control') {
-      cursor.mode = this.trace
-    }
-    if (e.key === 'Escape') {
+    } else if (e.key === 'Escape') {
       this.fill()
-    }
-    if (e.key === 's') {
+    } else if (e.key === 's') {
       grab(this.el.toDataURL('image/png'))
     }
     this.context.fillStyle = cursor.color
