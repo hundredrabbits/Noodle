@@ -112,6 +112,21 @@ function Noodle () {
     this.trace(a, b)
   }
 
+  this.noodle = (a, b, r = cursor.size) => {
+    let x = -r
+    let y = 0
+    let err = 2 - 2 * r
+    do {
+      this.context.fillRect(b.x - x, b.y + y, 1, 1)
+      this.context.fillRect(b.x - y, b.y - x, 1, 1)
+      this.context.fillRect(b.x + x, b.y - y, 1, 1)
+      this.context.fillRect(b.x + y, b.y + x, 1, 1)
+      r = err
+      if (r <= y) err += ++y * 2 + 1
+      if (r > x || err > y) err += ++x * 2 + 1
+    } while (x < 0)
+  }
+
   // Events
 
   this.onMouseDown = (e) => {
@@ -155,6 +170,8 @@ function Noodle () {
       this.set('line')
     } else if (e.key === '5') {
       this.set('drag')
+    } else if (e.key === '9') {
+      this.set('noodle')
     } else if (e.key === 'i') {
       this.invert()
     } else if (e.key === 'x') {
