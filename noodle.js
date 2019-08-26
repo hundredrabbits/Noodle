@@ -23,7 +23,7 @@ function Noodle () {
   this.start = function () {
     this.fit()
     this.fill()
-    cursor.mode = this.trace
+    this.set('trace')
   }
 
   this.fit = function (size = { w: window.innerWidth, h: window.innerHeight }) {
@@ -57,6 +57,12 @@ function Noodle () {
     this.context.restore()
   }
 
+  this.set = (mode = 'trace') => {
+    if (!this[mode]) { console.warn('Unknown mode: ', mode); return }
+    document.title = `Noode — ${mode}`
+    cursor.mode = this[mode]
+  }
+
   // Modes
 
   this.trace = (a, b) => {
@@ -74,7 +80,7 @@ function Noodle () {
 
   this.drag = (a, b) => {
     const imageData = this.context.getImageData(0, 0, this.context.canvas.width, this.context.canvas.height)
-    this.context.putImageData(imageData, Math.floor((b.x - a.x) / 3) * 3, Math.floor((b.y - a.y) / 3) * 3)
+    this.context.putImageData(imageData, parseInt((b.x - a.x) / 3) * 3, parseInt((b.y - a.y) / 3) * 3)
     cursor.a.x = b.x
     cursor.a.y = b.y
   }
@@ -83,8 +89,12 @@ function Noodle () {
     for (let x = 0; x <= cursor.size; x++) {
       for (let y = 0; y <= cursor.size; y++) {
         const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
-        if (pos.x % 3 === 0 && pos.y % 3 === 0) {
-          this.context.fillRect(pos.x, pos.y, 1, 1)
+        if (pos.x % 3 === 0) {
+          if (pos.y % 6 === 0) {
+            this.context.fillRect(pos.x, pos.y, 1, 1)
+          } else if (pos.y % 3 === 0) {
+            this.context.fillRect(pos.x + 2, pos.y, 1, 1)
+          }
         }
       }
     }
@@ -129,15 +139,17 @@ function Noodle () {
     if (e.key === 'Shift') {
       cursor.color = 'white'
     } else if (e.key === 'Alt') {
-      cursor.mode = this.drag
+      this.set('drag')
     } else if (e.key === 'Control' || e.key === 'Meta') {
-      cursor.mode = this.tone
+      this.set('tone')
     } else if (e.key === '1') {
-      cursor.mode = this.trace
+      this.set('trace')
     } else if (e.key === '2') {
-      cursor.mode = this.tone
+      this.set('tone')
     } else if (e.key === '3') {
-      cursor.mode = this.erase
+      this.set('erase')
+    } else if (e.key === '4') {
+      this.set('drag')
     } else if (e.key === 'i') {
       this.invert()
     } else if (e.key === 'x') {
@@ -154,7 +166,7 @@ function Noodle () {
     if (e.key === 'Shift') {
       cursor.color = 'black'
     } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta') {
-      cursor.mode = this.trace
+      this.set('trace')
     } else if (e.key === 'Escape') {
       this.fill()
     } else if (e.key === 's') {
