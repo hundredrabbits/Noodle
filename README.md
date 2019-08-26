@@ -10,12 +10,6 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 - `l-click` color/black.
 - `shift l-click` color/white.
-- `meta l-click` tone.
-- `alt l-click` drag.
-
-### Right Click
-
-- `right click` line.
 
 ### Sticky
 
