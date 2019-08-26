@@ -57,7 +57,9 @@ function Noodle () {
 
   this.set = (mode = 'trace') => {
     if (!this[mode]) { return }
-    document.title = `Noodle — ${mode}[${window.innerWidth}x${window.innerHeight}]`
+    const px = mode === 'tone' || mode === 'block' ? ' ' + cursor.size + 'px' : ''
+    const rs = ` ${window.innerWidth}x${window.innerHeight}`
+    document.title = `noodle(${mode}${px})${rs}`
     cursor.mode = this[mode]
   }
 
@@ -187,10 +189,10 @@ function Noodle () {
   this.onKeyUp = (e) => {
     if (e.key === 'Shift') {
       cursor.color = 'black'
-    } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta') {
-      this.set('trace')
-    } else if (e.key === 'Escape' && e.shiftKey === true) {
+    } else if (e.key === 'Backspace' && e.shiftKey === true) {
       this.fill()
+    } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta' || e.key === 'Escape') {
+      this.set('trace')
     } else if (e.key === 's') {
       grab(this.el.toDataURL('image/png'))
     }
