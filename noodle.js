@@ -189,7 +189,7 @@ function Noodle () {
       cursor.color = 'black'
     } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta') {
       this.set('trace')
-    } else if (e.key === 'Escape') {
+    } else if (e.key === 'Escape' && e.shiftKey === true) {
       this.fill()
     } else if (e.key === 's') {
       grab(this.el.toDataURL('image/png'))

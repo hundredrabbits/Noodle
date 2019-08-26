@@ -24,5 +24,5 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 - `i` invert.
 - `x` flip.
 - `s` export.
-- `escape` clear.
+- `shift escape` clear.
 - `paste` import.
