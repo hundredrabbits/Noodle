@@ -15,6 +15,10 @@ function Noodle () {
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
     window.addEventListener('contextmenu', this.onMouseUp, false)
+    window.addEventListener('dragover', this.onDrag, false)
+    window.addEventListener('drop', this.onDrop, false)
+    window.addEventListener('paste', this.onPaste, false)
+
     this.fit()
   }
 
@@ -113,8 +117,8 @@ function Noodle () {
     cursor.a.x = b.x
     cursor.a.y = b.y
   }
-  
-  this.noodle = (a, b, r = cursor.size) => {
+
+  this.circle = (a, b, r = cursor.size) => {
     let x = -r
     let y = 0
     let err = 2 - 2 * r
@@ -173,7 +177,7 @@ function Noodle () {
     } else if (e.key === '5') {
       this.set('drag')
     } else if (e.key === '9') {
-      this.set('noodle')
+      this.set('circle')
     } else if (e.key === 'i') {
       this.invert()
     } else if (e.key === 'x') {
@@ -199,7 +203,25 @@ function Noodle () {
     this.context.fillStyle = cursor.color
   }
 
-  window.addEventListener('paste', async (e) => {
+  this.onDrop = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const file = e.dataTransfer.files[0]
+    const filename = file.path ? file.path : file.name ? file.name : ''
+    const img = new Image()
+    img.onload = () => {
+      this.context.drawImage(img, 0, 0)
+    }
+    img.src = URL.createObjectURL(file)
+  }
+
+  this.onDrag = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'copy'
+  }
+
+  this.onPaste = async (e) => {
     e.preventDefault()
     e.stopPropagation()
     for (const item of e.clipboardData.items) {
@@ -210,7 +232,7 @@ function Noodle () {
       }
       img.src = URL.createObjectURL(item.getAsFile())
     }
-  })
+  }
 
   function grab (base64, name = 'export.png') {
     const link = document.createElement('a')

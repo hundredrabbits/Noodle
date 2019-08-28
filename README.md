@@ -27,4 +27,4 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 ## IO
 
 - To export an image file, simply press `s`.
-- To import an image file, simply copy it from your system and paste it in the browser window.
+- To import an image file, simply copy it from your system and paste it in the browser window, or drag it from your desktop to the browser window.
