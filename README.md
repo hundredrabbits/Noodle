@@ -28,3 +28,8 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 - To export an image file, simply press `s`.
 - To import an image file, simply copy it from your system and paste it in the browser window, or drag it from your desktop to the browser window.
+
+## Small, Sharp Tools
+
+- [Noodle](https://github.com/hundredrabbits/noodle), sketch tool.
+- [Moogle](https://github.com/hundredrabbits/moogle), crop tool.

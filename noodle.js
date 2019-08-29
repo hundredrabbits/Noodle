@@ -67,6 +67,15 @@ function Noodle () {
     cursor.mode = this[mode]
   }
 
+  this.draw = (file) => {
+    const img = new Image()
+    img.onload = () => {
+      this.context.drawImage(img, 0, 0)
+      this.cache = img
+    }
+    img.src = URL.createObjectURL(file)
+  }
+
   // Modes
 
   this.trace = (a, b) => {
@@ -208,11 +217,7 @@ function Noodle () {
     e.stopPropagation()
     const file = e.dataTransfer.files[0]
     const filename = file.path ? file.path : file.name ? file.name : ''
-    const img = new Image()
-    img.onload = () => {
-      this.context.drawImage(img, 0, 0)
-    }
-    img.src = URL.createObjectURL(file)
+    this.draw(file)
   }
 
   this.onDrag = (e) => {
@@ -226,11 +231,7 @@ function Noodle () {
     e.stopPropagation()
     for (const item of e.clipboardData.items) {
       if (item.type.indexOf('image') < 0) { continue }
-      const img = new Image()
-      img.onload = () => {
-        this.context.drawImage(img, 0, 0)
-      }
-      img.src = URL.createObjectURL(item.getAsFile())
+      this.draw(item.getAsFile())
     }
   }
 
