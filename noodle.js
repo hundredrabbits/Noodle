@@ -18,7 +18,7 @@ function Noodle () {
     window.addEventListener('dragover', this.onDrag, false)
     window.addEventListener('drop', this.onDrop, false)
     window.addEventListener('paste', this.onPaste, false)
-
+    window.addEventListener('beforeunload', this.onUnload, false)
     this.fit()
   }
 
@@ -233,6 +233,12 @@ function Noodle () {
       if (item.type.indexOf('image') < 0) { continue }
       this.draw(item.getAsFile())
     }
+  }
+
+  this.onUnload = (e) => {
+    const confirmationMessage = '\o/';
+    (e || window.event).returnValue = confirmationMessage
+    return confirmationMessage
   }
 
   function grab (base64, name = 'export.png') {
