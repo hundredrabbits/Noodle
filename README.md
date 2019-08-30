@@ -14,12 +14,9 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 - `4` line mode.
 - `5` drag mode.
 
-### Left Click
-
 - `click` color/black.
 - `shift-click` color/white.
-
-### Mods
+- `shift-del` clear all.
 
 - `i` invert.
 - `x` flip.
