@@ -126,12 +126,16 @@ function Noodle () {
     this.pattern(a, b, _block)
   }
 
-  this.horizontal = (a, b) => {
+  this.hor = (a, b) => {
     this.pattern(a, b, _hor)
   }
 
-  this.vertical = (a, b) => {
+  this.ver = (a, b) => {
     this.pattern(a, b, _ver)
+  }
+
+  this.dot = (a, b) => {
+    this.pattern(a, b, _dot)
   }
 
   this.line = (a, b) => {
@@ -192,12 +196,14 @@ function Noodle () {
       this.set('tone')
     } else if (e.key === '3') {
       this.set('block')
+    } else if (e.key === '4') {
+      this.set('hor')
     } else if (e.key === '5') {
-      this.set('drag')
+      this.set('ver')
     } else if (e.key === '6') {
-      this.set('horizontal')
-    } else if (e.key === '7') {
-      this.set('vertical')
+      this.set('dot')
+    } else if (e.key === '0') {
+      this.set('drag')
     } else if (e.key === 'i') {
       this.invert()
     } else if (e.key === 'x') {
@@ -255,6 +261,7 @@ function Noodle () {
   this.onContext = (e) => {
     e.stopPropagation()
     e.preventDefault()
+    return false
   }
 
   function grab (base64, name = 'export.png') {
@@ -284,5 +291,8 @@ function Noodle () {
 
   function _ver (x, y) {
     return x % 6 === 0
+  }
+  function _dot (x, y) {
+    return x % 12 === 0 && y % 12 === 0
   }
 }
