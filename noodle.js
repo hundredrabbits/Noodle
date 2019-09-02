@@ -1,4 +1,4 @@
-'us strict'
+'use strict'
 
 /* global cursor */
 
@@ -115,6 +115,42 @@ function Noodle () {
     }
   }
 
+  this.horizontal = (a, b) => {
+    for (let x = 0; x <= cursor.size; x++) {
+      for (let y = 0; y <= cursor.size; y++) {
+        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
+        if (pos.y % 6 === 0) {
+          this.context.fillRect(pos.x, pos.y, 1, 1)
+        }
+      }
+    }
+  }
+
+  this.vertical = (a, b) => {
+    for (let x = 0; x <= cursor.size; x++) {
+      for (let y = 0; y <= cursor.size; y++) {
+        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
+        if (pos.x % 6 === 0) {
+          this.context.fillRect(pos.x, pos.y, 1, 1)
+        }
+      }
+    }
+  }
+
+  this.grid = (a, b) => {
+    for (let x = 0; x <= cursor.size; x++) {
+      for (let y = 0; y <= cursor.size; y++) {
+        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
+        if (pos.x % 6 === 0) {
+          this.context.fillRect(pos.x, pos.y, 1, 1)
+        }
+        if (pos.y % 6 === 0) {
+          this.context.fillRect(pos.x + 2, pos.y, 1, 1)
+        }
+      }
+    }
+  }
+
   this.line = (a, b) => {
     if (cursor.z !== 0) { return }
     this.trace(a, b)
@@ -185,6 +221,12 @@ function Noodle () {
       this.set('line')
     } else if (e.key === '5') {
       this.set('drag')
+    } else if (e.key === '6') {
+      this.set('horizontal')
+    } else if (e.key === '7') {
+      this.set('vertical')
+    } else if (e.key === '8') {
+      this.set('grid')
     } else if (e.key === '9') {
       this.set('circle')
     } else if (e.key === 'i') {
