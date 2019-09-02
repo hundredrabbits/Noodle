@@ -82,7 +82,7 @@ function Noodle () {
   this.update = () => {
     const px = cursor.mode === 'tone' || cursor.mode === 'block' ? ' ' + cursor.size + 'px' : ''
     const rs = ` ${window.innerWidth}x${window.innerHeight}`
-    document.title = `noodle(${cursor.mode}${px})${rs} ${cursor.color}`
+    document.title = `noodle(${cursor.mode} ${cursor.color}${px})${rs}`
   }
 
   // Modes
