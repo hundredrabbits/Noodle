@@ -14,7 +14,7 @@ function Noodle () {
     window.addEventListener('mouseup', this.onMouseUp, false)
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
-    window.addEventListener('contextmenu', this.onMouseUp, false)
+    window.addEventListener('contextmenu', this.onContext, false)
     window.addEventListener('dragover', this.onDrag, false)
     window.addEventListener('drop', this.onDrop, false)
     window.addEventListener('paste', this.onPaste, false)
@@ -67,6 +67,13 @@ function Noodle () {
 
   this.color = (color) => {
     cursor.color = color
+    this.update()
+  }
+
+  this.size = (mod) => {
+    if (cursor.size + mod > 0 && cursor.size + mod < 100) {
+      cursor.size += mod
+    }
     this.update()
   }
 
@@ -127,20 +134,6 @@ function Noodle () {
     this.pattern(a, b, _ver)
   }
 
-  this.grid = (a, b) => {
-    for (let x = 0; x <= cursor.size; x++) {
-      for (let y = 0; y <= cursor.size; y++) {
-        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
-        if (pos.x % 6 === 0) {
-          this.context.fillRect(pos.x, pos.y, 1, 1)
-        }
-        if (pos.y % 6 === 0) {
-          this.context.fillRect(pos.x + 2, pos.y, 1, 1)
-        }
-      }
-    }
-  }
-
   this.line = (a, b) => {
     if (cursor.z !== 0) { return }
     this.trace(a, b)
@@ -153,36 +146,25 @@ function Noodle () {
     cursor.a.y = b.y
   }
 
-  this.circle = (a, b, r = cursor.size) => {
-    let x = -r
-    let y = 0
-    let err = 2 - 2 * r
-    do {
-      this.context.fillRect(b.x - x, b.y + y, 1, 1)
-      this.context.fillRect(b.x - y, b.y - x, 1, 1)
-      this.context.fillRect(b.x + x, b.y - y, 1, 1)
-      this.context.fillRect(b.x + y, b.y + x, 1, 1)
-      r = err
-      if (r <= y) err += ++y * 2 + 1
-      if (r > x || err > y) err += ++x * 2 + 1
-    } while (x < 0)
-  }
-
   // Events
 
   this.onMouseDown = (e) => {
     cursor.z = 1
     cursor.a.x = e.clientX
     cursor.a.y = e.clientY
+    if (e.button > 1) {
+      this.set('line')
+    }
     this[cursor.mode](cursor.a, cursor.a)
     e.preventDefault()
   }
 
   this.onMouseMove = (e) => {
-    if (cursor.z !== 1) { return }
-    cursor.b.x = e.clientX
-    cursor.b.y = e.clientY
-    this[cursor.mode](cursor.a, cursor.b)
+    if (cursor.z === 1) {
+      cursor.b.x = e.clientX
+      cursor.b.y = e.clientY
+      this[cursor.mode](cursor.a, cursor.b)
+    }
     e.preventDefault()
   }
 
@@ -191,6 +173,9 @@ function Noodle () {
     cursor.b.x = e.clientX
     cursor.b.y = e.clientY
     this[cursor.mode](cursor.a, cursor.b)
+    if (e.button > 1) {
+      this.set('trace')
+    }
     e.preventDefault()
   }
 
@@ -207,26 +192,20 @@ function Noodle () {
       this.set('tone')
     } else if (e.key === '3') {
       this.set('block')
-    } else if (e.key === '4') {
-      this.set('line')
     } else if (e.key === '5') {
       this.set('drag')
     } else if (e.key === '6') {
       this.set('horizontal')
     } else if (e.key === '7') {
       this.set('vertical')
-    } else if (e.key === '8') {
-      this.set('grid')
-    } else if (e.key === '9') {
-      this.set('circle')
     } else if (e.key === 'i') {
       this.invert()
     } else if (e.key === 'x') {
       this.flip()
-    } else if (e.key === '[' && cursor.size > 0) {
-      cursor.size -= 1
-    } else if (e.key === ']' && cursor.size < 100) {
-      cursor.size += 1
+    } else if (e.key === '[') {
+      this.size(-1)
+    } else if (e.key === ']') {
+      this.size(1)
     }
     this.context.fillStyle = cursor.color
   }
@@ -273,6 +252,11 @@ function Noodle () {
     return confirmationMessage
   }
 
+  this.onContext = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+  }
+
   function grab (base64, name = 'export.png') {
     const link = document.createElement('a')
     link.setAttribute('href', base64)
@@ -287,12 +271,7 @@ function Noodle () {
   // Textures
 
   function _halftone (x, y) {
-    if (x % 3 === 0 && y % 6 === 0) {
-      return true
-    } else if (x % 3 === 2 && y % 6 === 3) {
-      return true
-    }
-    return false
+    return (x % 3 === 0 && y % 6 === 0) || (x % 3 === 2 && y % 6 === 3)
   }
 
   function _block (x, y) {
