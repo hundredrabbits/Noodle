@@ -60,11 +60,14 @@ function Noodle () {
   }
 
   this.set = (mode = 'trace') => {
-    if (!this[mode]) { return }
-    const px = mode === 'tone' || mode === 'block' ? ' ' + cursor.size + 'px' : ''
-    const rs = ` ${window.innerWidth}x${window.innerHeight}`
-    document.title = `noodle(${mode}${px})${rs}`
-    cursor.mode = this[mode]
+    if (!this[mode]) { console.warn('Unknown mode: ', mode); return }
+    cursor.mode = mode
+    this.update()
+  }
+
+  this.color = (color) => {
+    cursor.color = color
+    this.update()
   }
 
   this.draw = (file) => {
@@ -74,6 +77,12 @@ function Noodle () {
       this.cache = img
     }
     img.src = URL.createObjectURL(file)
+  }
+
+  this.update = () => {
+    const px = cursor.mode === 'tone' || cursor.mode === 'block' ? ' ' + cursor.size + 'px' : ''
+    const rs = ` ${window.innerWidth}x${window.innerHeight}`
+    document.title = `noodle(${cursor.mode}${px})${rs} ${cursor.color}`
   }
 
   // Modes
@@ -184,7 +193,7 @@ function Noodle () {
     cursor.z = 1
     cursor.a.x = e.clientX
     cursor.a.y = e.clientY
-    cursor.mode(cursor.a, cursor.a)
+    this[cursor.mode](cursor.a, cursor.a)
     e.preventDefault()
   }
 
@@ -192,7 +201,7 @@ function Noodle () {
     if (cursor.z !== 1) { return }
     cursor.b.x = e.clientX
     cursor.b.y = e.clientY
-    cursor.mode(cursor.a, cursor.b)
+    this[cursor.mode](cursor.a, cursor.b)
     e.preventDefault()
   }
 
@@ -200,13 +209,13 @@ function Noodle () {
     cursor.z = 0
     cursor.b.x = e.clientX
     cursor.b.y = e.clientY
-    cursor.mode(cursor.a, cursor.b)
+    this[cursor.mode](cursor.a, cursor.b)
     e.preventDefault()
   }
 
   this.onKeyDown = (e) => {
     if (e.key === 'Shift') {
-      cursor.color = 'white'
+      this.color('white')
     } else if (e.key === 'Alt') {
       this.set('drag')
     } else if (e.key === 'Control' || e.key === 'Meta') {
@@ -243,7 +252,7 @@ function Noodle () {
 
   this.onKeyUp = (e) => {
     if (e.key === 'Shift') {
-      cursor.color = 'black'
+      this.color('black')
     } else if (e.key === 'Backspace' && e.shiftKey === true) {
       this.fill()
     } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta' || e.key === 'Escape') {
