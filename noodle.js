@@ -100,50 +100,31 @@ function Noodle () {
     }
   }
 
-  this.tone = (a, b) => {
+  this.pattern = (a, b, pat) => {
     for (let x = 0; x <= cursor.size; x++) {
       for (let y = 0; y <= cursor.size; y++) {
         const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
-        if (pos.x % 3 === 0) {
-          if (pos.y % 6 === 0) {
-            this.context.fillRect(pos.x, pos.y, 1, 1)
-          } else if (pos.y % 3 === 0) {
-            this.context.fillRect(pos.x + 2, pos.y, 1, 1)
-          }
+        if (pat(pos.x, pos.y) === true) {
+          this.context.fillRect(pos.x, pos.y, 1, 1)
         }
       }
     }
+  }
+
+  this.tone = (a, b) => {
+    this.pattern(a, b, _halftone)
   }
 
   this.block = (a, b) => {
-    for (let x = 0; x <= cursor.size; x++) {
-      for (let y = 0; y <= cursor.size; y++) {
-        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
-        this.context.fillRect(pos.x, pos.y, 1, 1)
-      }
-    }
+    this.pattern(a, b, _block)
   }
 
   this.horizontal = (a, b) => {
-    for (let x = 0; x <= cursor.size; x++) {
-      for (let y = 0; y <= cursor.size; y++) {
-        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
-        if (pos.y % 6 === 0) {
-          this.context.fillRect(pos.x, pos.y, 1, 1)
-        }
-      }
-    }
+    this.pattern(a, b, _hor)
   }
 
   this.vertical = (a, b) => {
-    for (let x = 0; x <= cursor.size; x++) {
-      for (let y = 0; y <= cursor.size; y++) {
-        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
-        if (pos.x % 6 === 0) {
-          this.context.fillRect(pos.x, pos.y, 1, 1)
-        }
-      }
-    }
+    this.pattern(a, b, _ver)
   }
 
   this.grid = (a, b) => {
@@ -301,5 +282,28 @@ function Noodle () {
 
   function step (val, len) {
     return parseInt(val / len) * len
+  }
+
+  // Textures
+
+  function _halftone (x, y) {
+    if (x % 3 === 0 && y % 6 === 0) {
+      return true
+    } else if (x % 3 === 2 && y % 6 === 3) {
+      return true
+    }
+    return false
+  }
+
+  function _block (x, y) {
+    return true
+  }
+
+  function _hor (x, y) {
+    return y % 6 === 0
+  }
+
+  function _ver (x, y) {
+    return x % 6 === 0
   }
 }
