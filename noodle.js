@@ -12,6 +12,9 @@ function Noodle () {
     window.addEventListener('mousedown', this.onMouseDown, false)
     window.addEventListener('mousemove', this.onMouseMove, false)
     window.addEventListener('mouseup', this.onMouseUp, false)
+    window.addEventListener('touchstart', this.onMouseDown, false)
+    window.addEventListener('touchmove', this.onMouseMove, false)
+    window.addEventListener('touchend', this.onMouseUp, false)
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
     window.addEventListener('contextmenu', this.onContext, false)
@@ -154,8 +157,8 @@ function Noodle () {
 
   this.onMouseDown = (e) => {
     cursor.z = 1
-    cursor.a.x = e.clientX
-    cursor.a.y = e.clientY
+    cursor.a.x = e.clientX || e.touches[0].clientX
+    cursor.a.y = e.clientY || e.touches[0].clientY
     if (e.button > 1) {
       this.set('line')
     }
@@ -165,8 +168,8 @@ function Noodle () {
 
   this.onMouseMove = (e) => {
     if (cursor.z === 1) {
-      cursor.b.x = e.clientX
-      cursor.b.y = e.clientY
+      cursor.b.x = e.clientX || e.touches[0].clientX
+      cursor.b.y = e.clientY || e.touches[0].clientY
       this[cursor.mode](cursor.a, cursor.b)
     }
     e.preventDefault()
@@ -174,8 +177,8 @@ function Noodle () {
 
   this.onMouseUp = (e) => {
     cursor.z = 0
-    cursor.b.x = e.clientX
-    cursor.b.y = e.clientY
+    cursor.b.x = e.clientX || e.changedTouches[0].clientX
+    cursor.b.y = e.clientY || e.changedTouches[0].clientY
     this[cursor.mode](cursor.a, cursor.b)
     if (e.button > 1) {
       this.set('trace')
