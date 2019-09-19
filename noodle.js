@@ -6,6 +6,7 @@ function Noodle () {
   this.el = document.createElement('canvas')
   this.context = this.el.getContext('2d')
   this.ratio = window.devicePixelRatio
+  this.offset = { x: 0, y: 0 }
 
   this.install = function (host) {
     host.appendChild(this.el)
@@ -153,12 +154,24 @@ function Noodle () {
     cursor.a.y = b.y
   }
 
+  this.move = (x, y, leap = false) => {
+    this.offset.x -= x * (leap ? 50 : 10)
+    this.offset.y -= y * (leap ? 50 : 10)
+    this.el.setAttribute('style', `left:${this.offset.x}px;top:${-this.offset.y}px`)
+  }
+
+  this.center = () => {
+    this.offset.x = 0
+    this.offset.y = 0
+    this.el.setAttribute('style', `left:${this.offset.x}px;top:${-this.offset.y}px`)
+  }
+
   // Events
 
   this.onMouseDown = (e) => {
     cursor.z = 1
-    cursor.a.x = e.clientX || e.touches[0].clientX
-    cursor.a.y = e.clientY || e.touches[0].clientY
+    cursor.a.x = (e.clientX || e.touches[0].clientX) - this.offset.x
+    cursor.a.y = (e.clientY || e.touches[0].clientY) + this.offset.y
     if (e.button > 1) {
       this.set('line')
     }
@@ -168,8 +181,8 @@ function Noodle () {
 
   this.onMouseMove = (e) => {
     if (cursor.z === 1) {
-      cursor.b.x = e.clientX || e.touches[0].clientX
-      cursor.b.y = e.clientY || e.touches[0].clientY
+      cursor.b.x = (e.clientX || e.touches[0].clientX) - this.offset.x
+      cursor.b.y = (e.clientY || e.touches[0].clientY) + this.offset.y
       this[cursor.mode](cursor.a, cursor.b)
     }
     e.preventDefault()
@@ -177,8 +190,8 @@ function Noodle () {
 
   this.onMouseUp = (e) => {
     cursor.z = 0
-    cursor.b.x = e.clientX || e.changedTouches[0].clientX
-    cursor.b.y = e.clientY || e.changedTouches[0].clientY
+    cursor.b.x = (e.clientX || e.changedTouches[0].clientX) - this.offset.x
+    cursor.b.y = (e.clientY || e.changedTouches[0].clientY) + this.offset.y
     this[cursor.mode](cursor.a, cursor.b)
     if (e.button > 1) {
       this.set('trace')
@@ -215,6 +228,18 @@ function Noodle () {
       this.size(-1)
     } else if (e.key === ']') {
       this.size(1)
+    } else if (e.key === 'ArrowDown') {
+      this.move(0, -1, e.shiftKey)
+    } else if (e.key === 'ArrowUp') {
+      this.move(0, 1, e.shiftKey)
+    } else if (e.key === 'ArrowRight') {
+      this.move(1, 0, e.shiftKey)
+    } else if (e.key === 'ArrowLeft') {
+      this.move(-1, 0, e.shiftKey)
+    } else if (e.key === 'Escape') {
+      this.center()
+    } else {
+      console.log(e)
     }
     this.context.fillStyle = cursor.color
   }
