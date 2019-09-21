@@ -1,6 +1,6 @@
 'use strict'
 
-/* global cursor */
+/* global cursor MouseEvent Image */
 
 function Noodle () {
   this.el = document.createElement('canvas')
@@ -261,7 +261,6 @@ function Noodle () {
     e.preventDefault()
     e.stopPropagation()
     const file = e.dataTransfer.files[0]
-    const filename = file.path ? file.path : file.name ? file.name : ''
     this.draw(file)
   }
 
