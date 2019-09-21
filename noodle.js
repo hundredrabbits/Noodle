@@ -23,7 +23,6 @@ function Noodle () {
     window.addEventListener('drop', this.onDrop, false)
     window.addEventListener('paste', this.onPaste, false)
     window.addEventListener('beforeunload', this.onUnload, false)
-    this.fit()
   }
 
   this.start = function () {
@@ -32,11 +31,12 @@ function Noodle () {
     this.set('trace')
   }
 
-  this.fit = function (size = { w: window.innerWidth, h: window.innerHeight }) {
+  this.fit = function (size = { w: window.innerWidth - 30, h: window.innerHeight - 30 }) {
     this.el.width = size.w
     this.el.height = size.h
     this.el.style.width = size.w + 'px'
     this.el.style.height = size.h + 'px'
+    this.center()
   }
 
   this.fill = (color = 'white') => {
@@ -155,15 +155,15 @@ function Noodle () {
   }
 
   this.move = (x, y, leap = false) => {
-    this.offset.x -= x * (leap ? 50 : 10)
-    this.offset.y -= y * (leap ? 50 : 10)
+    this.offset.x -= x * (leap ? 100 : 50)
+    this.offset.y -= y * (leap ? 100 : 50)
     this.el.setAttribute('style', `left:${this.offset.x}px;top:${-this.offset.y}px`)
   }
 
   this.center = () => {
-    this.offset.x = 0
-    this.offset.y = 0
-    this.el.setAttribute('style', `left:${this.offset.x}px;top:${-this.offset.y}px`)
+    this.offset.x = (window.innerWidth - this.el.width) / 2
+    this.offset.y = -(window.innerHeight - this.el.height) / 2
+    this.el.setAttribute('style', `left:${parseInt(this.offset.x) - 0.5}px;top:${-parseInt(this.offset.y) - 0.5}px`)
   }
 
   // Events
