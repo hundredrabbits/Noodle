@@ -238,8 +238,6 @@ function Noodle () {
       this.move(-1, 0, e.shiftKey)
     } else if (e.key === 'Escape') {
       this.center()
-    } else {
-      console.log(e)
     }
     this.context.fillStyle = cursor.color
   }

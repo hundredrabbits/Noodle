@@ -16,12 +16,18 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 - `6` dot mode.
 - `0` drag mode.
 
+### Controls
+
 - `click` color/black.
 - `shift-click` color/white.
 - `shift-del` clear all.
+- `arrows` move viewport.
+
+### Specials
 
 - `i` invert.
 - `x` flip.
+- `s` export.
 
 ## IO
 
