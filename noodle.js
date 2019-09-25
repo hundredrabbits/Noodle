@@ -116,9 +116,9 @@ function Noodle () {
   }
 
   this.pattern = (a, b, pat) => {
-    for (let x = 0; x <= cursor.size; x++) {
-      for (let y = 0; y <= cursor.size; y++) {
-        const pos = { x: b.x + x - (cursor.size / 2), y: b.y + y - (cursor.size / 2) }
+    for (let x = 0; x < cursor.size; x++) {
+      for (let y = 0; y < cursor.size; y++) {
+        const pos = { x: Math.floor(b.x + x - (cursor.size / 2)), y: Math.floor(b.y + y - (cursor.size / 2)) }
         if (pat(pos.x, pos.y) === true) {
           this.pixel(pos.x, pos.y)
         }
@@ -151,6 +151,7 @@ function Noodle () {
   }
 
   this.deco = (a, b) => {
+    cursor.deco++
     this.pattern(snap(a), snap(b), _deco)
   }
 
@@ -175,7 +176,7 @@ function Noodle () {
   this.center = () => {
     this.offset.x = (window.innerWidth - this.el.width) / 2
     this.offset.y = -(window.innerHeight - this.el.height) / 2
-    this.el.setAttribute('style', `left:${parseInt(this.offset.x) - 0.5}px;top:${-parseInt(this.offset.y) - 0.5}px`)
+    this.el.setAttribute('style', `left:${parseInt(this.offset.x)}px;top:${-parseInt(this.offset.y)}px`)
   }
 
   // Events
@@ -317,7 +318,7 @@ function Noodle () {
   }
 
   function snap (pos) {
-    return { x: step(pos.x + cursor.size / 2, cursor.size), y: step(pos.y + cursor.size / 2, cursor.size) }
+    return { x: step(pos.x + (cursor.size / 2), cursor.size), y: step(pos.y + (cursor.size / 2), cursor.size) }
   }
 
   // Textures
@@ -331,11 +332,11 @@ function Noodle () {
   }
 
   function _hor (x, y) {
-    return y % 6 === 0
+    return y % (cursor.size / 2) === 0
   }
 
   function _ver (x, y) {
-    return x % 6 === 0
+    return x % (cursor.size / 2) === 0
   }
 
   function _dot (x, y) {
@@ -343,6 +344,7 @@ function Noodle () {
   }
 
   function _deco (x, y) {
-    return true
+    const sp = { x: (x + (cursor.size / 2)) % cursor.size, y: (y + (cursor.size / 2)) % cursor.size }
+    return cursor.deco % 4 === 0 ? sp.x <= sp.y : cursor.deco % 4 === 1 ? sp.x >= sp.y : cursor.deco % 4 === 2 ? cursor.size - sp.x <= sp.y : cursor.size - sp.x >= sp.y
   }
 }
