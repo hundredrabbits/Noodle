@@ -13,9 +13,9 @@ function Noodle () {
     window.addEventListener('mousedown', this.onMouseDown, false)
     window.addEventListener('mousemove', this.onMouseMove, false)
     window.addEventListener('mouseup', this.onMouseUp, false)
-    window.addEventListener('touchstart', this.onMouseDown, {capture: false, passive: false})
-    window.addEventListener('touchmove', this.onMouseMove, {capture: false, passive: false})
-    window.addEventListener('touchend', this.onMouseUp, {capture: false, passive: false})
+    window.addEventListener('touchstart', this.onMouseDown, { capture: false, passive: false })
+    window.addEventListener('touchmove', this.onMouseMove, { capture: false, passive: false })
+    window.addEventListener('touchend', this.onMouseUp, { capture: false, passive: false })
     window.addEventListener('keydown', this.onKeyDown, false)
     window.addEventListener('keyup', this.onKeyUp, false)
     window.addEventListener('contextmenu', this.onContext, false)
@@ -26,17 +26,10 @@ function Noodle () {
   }
 
   this.start = function () {
-    this.fit()
+    console.clear()
+    this.resize(window.innerWidth - 15, window.innerHeight - 15)
     this.fill()
     this.set('trace')
-  }
-
-  this.fit = function (size = { w: window.innerWidth - 30, h: window.innerHeight - 30 }) {
-    this.el.width = size.w
-    this.el.height = size.h
-    this.el.style.width = size.w + 'px'
-    this.el.style.height = size.h + 'px'
-    this.center()
   }
 
   this.fill = (color = 'white') => {
@@ -44,6 +37,16 @@ function Noodle () {
     this.context.fillStyle = color
     this.context.fillRect(0, 0, window.innerWidth, window.innerHeight)
     this.context.restore()
+  }
+
+  this.resize = (w, h) => {
+    this.el.width = w
+    this.el.height = h
+    this.el.style.width = w + 'px'
+    this.el.style.height = h + 'px'
+    this.center()
+    this.fill()
+    this.update()
   }
 
   this.invert = () => {
