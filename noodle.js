@@ -107,7 +107,7 @@ function Noodle () {
     const dy = -Math.abs(b.y - a.y)
     let err = dx + dy; let e2
     for (;;) {
-      this.context.fillRect(a.x, a.y, 1, 1)
+      this.pixel(a.x, a.y)
       if (a.x === b.x && a.y === b.y) { break }
       e2 = 2 * err
       if (e2 >= dy) { err += dy; a.x += (a.x < b.x ? 1 : -1) }
@@ -118,12 +118,16 @@ function Noodle () {
   this.pattern = (a, b, pat) => {
     for (let x = 0; x <= cursor.size; x++) {
       for (let y = 0; y <= cursor.size; y++) {
-        const pos = { x: b.x + x - Math.floor(cursor.size / 2), y: b.y + y - Math.floor(cursor.size / 2) }
+        const pos = { x: b.x + x - (cursor.size / 2), y: b.y + y - (cursor.size / 2) }
         if (pat(pos.x, pos.y) === true) {
-          this.context.fillRect(pos.x, pos.y, 1, 1)
+          this.pixel(pos.x, pos.y)
         }
       }
     }
+  }
+
+  this.pixel = (x, y) => {
+    this.context.fillRect(Math.floor(x), Math.floor(y), 1, 1)
   }
 
   this.tone = (a, b) => {
