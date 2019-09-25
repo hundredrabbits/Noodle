@@ -7,6 +7,7 @@ function Noodle () {
   this.context = this.el.getContext('2d')
   this.ratio = window.devicePixelRatio
   this.offset = { x: 0, y: 0 }
+  this.tainted = false
 
   this.install = function (host) {
     host.appendChild(this.el)
@@ -192,6 +193,7 @@ function Noodle () {
   }
 
   this.onMouseUp = (e) => {
+    this.tainted = true
     cursor.z = 0
     cursor.b.x = (e.clientX || e.changedTouches[0].clientX) - this.offset.x
     cursor.b.y = (e.clientY || e.changedTouches[0].clientY) + this.offset.y
@@ -281,6 +283,7 @@ function Noodle () {
   }
 
   this.onUnload = (e) => {
+    if (this.tainted !== true) { return }
     const confirmationMessage = '\o/';
     (e || window.event).returnValue = confirmationMessage
     return confirmationMessage
