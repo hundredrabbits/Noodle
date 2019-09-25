@@ -95,7 +95,7 @@ function Noodle () {
   }
 
   this.update = () => {
-    const px = cursor.mode === 'tone' || cursor.mode === 'block' ? ' ' + cursor.size + 'px' : ''
+    const px = cursor.mode !== 'trace' ? ' ' + cursor.size + 'px' : ''
     const rs = ` ${window.innerWidth}x${window.innerHeight}`
     document.title = `noodle(${cursor.mode} ${cursor.color}${px})${rs}`
   }
@@ -147,7 +147,11 @@ function Noodle () {
   }
 
   this.dot = (a, b) => {
-    this.pattern(a, b, _dot)
+    this.pattern(snap(a), snap(b), _dot)
+  }
+
+  this.deco = (a, b) => {
+    this.pattern(snap(a), snap(b), _deco)
   }
 
   this.line = (a, b) => {
@@ -227,6 +231,8 @@ function Noodle () {
       this.set('ver')
     } else if (e.key === '6') {
       this.set('dot')
+    } else if (e.key === '7') {
+      this.set('deco')
     } else if (e.key === '0') {
       this.set('drag')
     } else if (e.key === 'i') {
@@ -310,6 +316,10 @@ function Noodle () {
     return parseInt(val / len) * len
   }
 
+  function snap (pos) {
+    return { x: step(pos.x + cursor.size / 2, cursor.size), y: step(pos.y + cursor.size / 2, cursor.size) }
+  }
+
   // Textures
 
   function _halftone (x, y) {
@@ -327,7 +337,12 @@ function Noodle () {
   function _ver (x, y) {
     return x % 6 === 0
   }
+
   function _dot (x, y) {
-    return x % 12 === 0 && y % 12 === 0
+    return x % cursor.size === 0 && y % cursor.size === 0
+  }
+
+  function _deco (x, y) {
+    return true
   }
 }
