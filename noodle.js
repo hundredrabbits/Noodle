@@ -26,9 +26,8 @@ function Noodle () {
     window.addEventListener('beforeunload', this.onUnload, false)
   }
 
-  this.start = function () {
-    console.clear()
-    this.resize(window.innerWidth - 15, window.innerHeight - 15)
+  this.start = function (w = window.innerWidth - 15, h = window.innerHeight - 15) {
+    this.resize(w, h)
     this.fill()
     this.set('trace')
   }
@@ -36,11 +35,12 @@ function Noodle () {
   this.fill = (color = 'white') => {
     this.context.save()
     this.context.fillStyle = color
-    this.context.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    this.context.fillRect(0, 0, this.el.width, this.el.height)
     this.context.restore()
   }
 
   this.resize = (w, h) => {
+    document.location.hash = `#${w}x${h}`
     this.el.width = w
     this.el.height = h
     this.el.style.width = w + 'px'
@@ -55,13 +55,13 @@ function Noodle () {
     this.context.drawImage(this.el, 0, 0)
     this.context.globalCompositeOperation = 'difference'
     this.context.fillStyle = 'white'
-    this.context.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    this.context.fillRect(0, 0, this.el.width, this.el.height)
     this.context.restore()
   }
 
   this.flip = () => {
     this.context.save()
-    this.context.translate(window.innerWidth, 0)
+    this.context.translate(this.el.width, 0)
     this.context.scale(-1, 1)
     this.context.drawImage(this.el, 0, 0)
     this.context.restore()
@@ -96,8 +96,8 @@ function Noodle () {
 
   this.update = () => {
     const px = cursor.mode !== 'trace' ? ' ' + cursor.size + 'px' : ''
-    const rs = ` ${window.innerWidth}x${window.innerHeight}`
-    document.title = `noodle(${cursor.mode} ${cursor.color}${px})${rs}`
+    const rs = ` ${this.el.width}x${this.el.height}`
+    document.title = `${cursor.mode} ${cursor.color}${px}${rs}`
   }
 
   // Modes

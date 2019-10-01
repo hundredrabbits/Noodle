@@ -28,10 +28,15 @@ s export
   </head>
   <body>
     <script>
+      console.clear()
+      const size = window.location.hash.substr(1)
+      const width = size.indexOf('x') > 2 ? parseInt(size.split('x')[0]) : window.innerWidth - 15
+      const height = size.indexOf('x') > 2 ? parseInt(size.split('x')[1]) : window.innerHeight - 15
+
       const cursor = { z: 0, a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, size: 20, mode: null, deco:0, color: 'black' }
       const noodle = new Noodle(cursor)
       noodle.install(document.body)
-      noodle.start()
+      noodle.start(width,height)
     </script>
     <style>
       * { margin:0;padding:0;border:0;outline:0; position:fixed }
