@@ -27,11 +27,16 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 - `i` invert.
 - `x` flip.
-- `s` export.
+- `e` export.
+- `q` center.
+- `w` move up.
+- `a` move left.
+- `s` move down.
+- `d` move right.
 
 ## IO
 
-- To export an image file, simply press `s`.
+- To export an image file, simply press `e`.
 - To import an image file, simply copy it from your system and paste it in the browser window, or drag it from your desktop to the browser window.
 
 ## Small, Sharp Tools

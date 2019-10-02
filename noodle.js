@@ -244,15 +244,15 @@ function Noodle () {
       this.size(-1)
     } else if (e.key === ']') {
       this.size(1)
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === 'ArrowDown' || e.key === 's') {
       this.move(0, -1, e.shiftKey)
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === 'ArrowUp' || e.key === 'w') {
       this.move(0, 1, e.shiftKey)
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === 'ArrowRight' || e.key === 'd') {
       this.move(1, 0, e.shiftKey)
-    } else if (e.key === 'ArrowLeft') {
+    } else if (e.key === 'ArrowLeft' || e.key === 'a') {
       this.move(-1, 0, e.shiftKey)
-    } else if (e.key === 'Escape') {
+    } else if (e.key === 'Escape' || e.key === 'q') {
       this.center()
     }
     this.context.fillStyle = cursor.color
@@ -265,7 +265,7 @@ function Noodle () {
       this.fill()
     } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta' || e.key === 'Escape') {
       this.set('trace')
-    } else if (e.key === 's') {
+    } else if (e.key === 'e') {
       grab(this.el.toDataURL('image/png'))
     }
     this.context.fillStyle = cursor.color
