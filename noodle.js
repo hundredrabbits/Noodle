@@ -240,9 +240,9 @@ function Noodle () {
       this.invert()
     } else if (e.key === 'x') {
       this.flip()
-    } else if (e.key === '[') {
+    } else if (e.key === '[' || e.key === 'z') {
       this.size(-1)
-    } else if (e.key === ']') {
+    } else if (e.key === ']' || e.key === 'x') {
       this.size(1)
     } else if (e.key === 'ArrowDown' || e.key === 's') {
       this.move(0, -1, e.shiftKey)
