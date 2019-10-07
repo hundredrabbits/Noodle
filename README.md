@@ -26,8 +26,10 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 ### Specials
 
 - `i` invert.
-- `x` flip.
+- `f` flip.
 - `e` export.
+- `z` decr brush size.
+- `x` incr brush size.
 - `q` center.
 - `w` move up.
 - `a` move left.

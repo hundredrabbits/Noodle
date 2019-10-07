@@ -238,7 +238,7 @@ function Noodle () {
       this.set('drag')
     } else if (e.key === 'i') {
       this.invert()
-    } else if (e.key === 'x') {
+    } else if (e.key === 'f') {
       this.flip()
     } else if (e.key === '[' || e.key === 'z') {
       this.size(-1)
