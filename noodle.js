@@ -155,9 +155,14 @@ function Noodle () {
     this.pattern(snap(a), snap(b), _deco)
   }
 
-  this.line = (a, b) => {
+  this.line = (a, b, e) => {
     if (cursor.z !== 0) { return }
-    this.trace(a, b)
+    if (e.metaKey || e.ctrlKey) {
+      const offset = { x: Math.abs(a.x - b.x), y: Math.abs(a.y - b.y) }
+      this.trace(a, offset.x > offset.y ? { x: b.x, y: a.y } : { x: a.x, y: b.y })
+    } else {
+      this.trace(a, b)
+    }
   }
 
   this.drag = (a, b) => {
@@ -188,7 +193,7 @@ function Noodle () {
     if (e.button > 1) {
       this.set('line')
     }
-    this[cursor.mode](cursor.a, cursor.a)
+    this[cursor.mode](cursor.a, cursor.a, e)
     e.preventDefault()
   }
 
@@ -196,7 +201,7 @@ function Noodle () {
     if (cursor.z === 1) {
       cursor.b.x = (e.clientX || e.touches[0].clientX) - this.offset.x
       cursor.b.y = (e.clientY || e.touches[0].clientY) + this.offset.y
-      this[cursor.mode](cursor.a, cursor.b)
+      this[cursor.mode](cursor.a, cursor.b, e)
     }
     e.preventDefault()
   }
@@ -206,7 +211,7 @@ function Noodle () {
     cursor.z = 0
     cursor.b.x = (e.clientX || e.changedTouches[0].clientX) - this.offset.x
     cursor.b.y = (e.clientY || e.changedTouches[0].clientY) + this.offset.y
-    this[cursor.mode](cursor.a, cursor.b)
+    this[cursor.mode](cursor.a, cursor.b, e)
     if (e.button > 1) {
       this.set('trace')
     }
@@ -218,8 +223,6 @@ function Noodle () {
       this.color('white')
     } else if (e.key === 'Alt') {
       this.set('drag')
-    } else if (e.key === 'Control' || e.key === 'Meta') {
-      this.set('tone')
     } else if (e.key === '1') {
       this.set('trace')
     } else if (e.key === '2') {
