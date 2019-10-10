@@ -67,6 +67,33 @@ function Noodle () {
     this.context.restore()
   }
 
+  this.draw = (file) => {
+    const img = new Image()
+    img.onload = () => {
+      this.context.drawImage(img, 0, 0)
+      this.cache = img
+      this.filter(_correct)
+    }
+    img.src = URL.createObjectURL(file)
+  }
+
+  this.update = () => {
+    const px = cursor.mode !== 'trace' ? ' ' + cursor.size + 'px' : ''
+    const rs = ` ${this.el.width}x${this.el.height}`
+    document.title = `${cursor.mode} ${cursor.color}${px}${rs}`
+  }
+
+  this.filter = (_fn, w = this.el.width, h = this.el.height) => {
+    const data = this.context.getImageData(0, 0, w, h).data
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        this.context.fillStyle = _fn(x, y, w, h, read(x, y, w, h, data), data)
+        this.pixel(x, y)
+      }
+    }
+    this.context.fillStyle = 'black'
+  }
+
   this.set = (mode = 'trace') => {
     if (!this[mode]) { console.warn('Unknown mode: ', mode); return }
     cursor.mode = mode
@@ -83,50 +110,6 @@ function Noodle () {
       cursor.size += mod
     }
     this.update()
-  }
-
-  this.draw = (file) => {
-    const img = new Image()
-    img.onload = () => {
-      this.context.drawImage(img, 0, 0)
-      this.cache = img
-    }
-    img.src = URL.createObjectURL(file)
-  }
-
-  this.update = () => {
-    const px = cursor.mode !== 'trace' ? ' ' + cursor.size + 'px' : ''
-    const rs = ` ${this.el.width}x${this.el.height}`
-    document.title = `${cursor.mode} ${cursor.color}${px}${rs}`
-  }
-
-  this.clean = (data = this.context.getImageData(0, 0, this.el.width, this.el.height).data) => {
-    this.context.fillStyle = 'red'
-    for (let y = 0; y < this.el.height; y++) {
-      for (let x = 0; x < this.el.width; x++) {
-        if (!this.jag(x, y, data)) { continue }
-        this.pixel(x, y)
-      }
-    }
-    this.context.fillStyle = 'black'
-  }
-
-  this.jag = (x, y, data = this.context.getImageData(0, 0, this.el.width, this.el.height).data) => {
-    if (this.read(x, y, data) && this.read(x - 1, y, data) && this.read(x, y + 1, data)) { return true }
-    if (this.read(x, y, data) && this.read(x, y + 1, data) && this.read(x + 1, y, data)) { return true }
-    if (this.read(x, y, data) && this.read(x + 1, y, data) && this.read(x, y - 1, data)) { return true }
-    if (this.read(x, y, data) && this.read(x, y - 1, data) && this.read(x - 1, y, data)) { return true }
-    return false
-  }
-
-  this.read = (x, y, data = this.context.getImageData(0, 0, this.el.width, this.el.height).data) => {
-    if (x < 0 || x > this.el.width || y < 0 || y > this.el.height) { return false }
-    const id = this.at(x, y)
-    return data[id] < 128 || data[id + 1] < 128 || data[id + 2] < 128
-  }
-
-  this.at = (x, y) => {
-    return ((y * this.el.width) + (x % this.el.width)) * 4
   }
 
   // Modes
@@ -286,8 +269,9 @@ function Noodle () {
       this.move(-1, 0, e.shiftKey)
     } else if (e.key === 'Escape' || e.key === 'q') {
       this.center()
+      this.filter(_correct)
     } else if (e.key === 'Tab') {
-      this.clean()
+      this.filter(_jagged)
       e.preventDefault()
     }
     this.context.fillStyle = cursor.color
@@ -381,5 +365,42 @@ function Noodle () {
   function _deco (x, y) {
     const sp = { x: (x + (cursor.size / 2)) % cursor.size, y: (y + (cursor.size / 2)) % cursor.size }
     return cursor.deco % 4 === 0 ? sp.x <= sp.y : cursor.deco % 4 === 1 ? sp.x >= sp.y : cursor.deco % 4 === 2 ? cursor.size - sp.x <= sp.y : cursor.size - sp.x >= sp.y
+  }
+
+  // Filters
+
+  function _correct (x, y, w, h, pixel, data) {
+    const l = lum(pixel)
+    if (pixel[0] === 255 && pixel[1] === 0 && pixel[2] === 0) { return 'black' }
+    return l > 175 ? 'white' : l < 100 ? 'black' : _halftone(x, y) === true ? 'black' : 'white'
+  }
+
+  function _jagged (x, y, w, h, pixel, data) {
+    const neighs = neighbors(x, y, w, h, data)
+    if (abs(pixel) && abs(neighs.n) && abs(neighs.e) && !abs(neighs.ne) && (!abs(neighs.s) || !abs(neighs.w))) { return 'red' }
+    if (abs(pixel) && abs(neighs.n) && abs(neighs.w) && !abs(neighs.nw) && (!abs(neighs.s) || !abs(neighs.e))) { return 'red' }
+    if (abs(pixel) && abs(neighs.s) && abs(neighs.e) && !abs(neighs.se) && (!abs(neighs.n) || !abs(neighs.w))) { return 'red' }
+    if (abs(pixel) && abs(neighs.s) && abs(neighs.w) && !abs(neighs.sw) && (!abs(neighs.n) || !abs(neighs.e))) { return 'red' }
+    return abs(pixel) ? 'black' : 'white'
+  }
+
+  function neighbors (x, y, w, h, data) {
+    return { n: read(x, y + 1, w, h, data), ne: read(x + 1, y + 1, w, h, data), e: read(x + 1, y, w, h, data), se: read(x + 1, y - 1, w, h, data), s: read(x, y - 1, w, h, data), sw: read(x - 1, y - 1, w, h, data), w: read(x - 1, y, w, h, data), nw: read(x - 1, y + 1, w, h, data) }
+  }
+
+  // Each
+
+  function lum (pixel) { // Returns the luminance of a color.
+    return Math.floor(0.2126 * pixel[0] + 0.7152 * pixel[1] + 0.0722 * pixel[2])
+  }
+
+  function abs (pixel) { // Returns true/false for a pixel.
+    return lum(pixel) === 0
+  }
+
+  function read (x, y, w, h, data) { // Returns the rgb of a pixel.
+    if (x < 0 || x > w || y < 0 || y > h) { return false }
+    const id = ((y * w) + (x % w)) * 4
+    return [data[id], data[id + 1], data[id + 2]]
   }
 }
