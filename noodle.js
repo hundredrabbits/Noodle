@@ -100,6 +100,35 @@ function Noodle () {
     document.title = `${cursor.mode} ${cursor.color}${px}${rs}`
   }
 
+  this.clean = (data = this.context.getImageData(0, 0, this.el.width, this.el.height).data) => {
+    this.context.fillStyle = 'red'
+    for (let y = 0; y < this.el.height; y++) {
+      for (let x = 0; x < this.el.width; x++) {
+        if (!this.jag(x, y, data)) { continue }
+        this.pixel(x, y)
+      }
+    }
+    this.context.fillStyle = 'black'
+  }
+
+  this.jag = (x, y, data = this.context.getImageData(0, 0, this.el.width, this.el.height).data) => {
+    if (this.read(x, y, data) && this.read(x - 1, y, data) && this.read(x, y + 1, data)) { return true }
+    if (this.read(x, y, data) && this.read(x, y + 1, data) && this.read(x + 1, y, data)) { return true }
+    if (this.read(x, y, data) && this.read(x + 1, y, data) && this.read(x, y - 1, data)) { return true }
+    if (this.read(x, y, data) && this.read(x, y - 1, data) && this.read(x - 1, y, data)) { return true }
+    return false
+  }
+
+  this.read = (x, y, data = this.context.getImageData(0, 0, this.el.width, this.el.height).data) => {
+    if (x < 0 || x > this.el.width || y < 0 || y > this.el.height) { return false }
+    const id = this.at(x, y)
+    return data[id] < 128 || data[id + 1] < 128 || data[id + 2] < 128
+  }
+
+  this.at = (x, y) => {
+    return ((y * this.el.width) + (x % this.el.width)) * 4
+  }
+
   // Modes
 
   this.trace = (a, b) => {
@@ -257,6 +286,9 @@ function Noodle () {
       this.move(-1, 0, e.shiftKey)
     } else if (e.key === 'Escape' || e.key === 'q') {
       this.center()
+    } else if (e.key === 'Tab') {
+      this.clean()
+      e.preventDefault()
     }
     this.context.fillStyle = cursor.color
   }
