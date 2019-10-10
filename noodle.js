@@ -255,6 +255,8 @@ function Noodle () {
       this.invert()
     } else if (e.key === 'f') {
       this.flip()
+    } else if (e.key === 'q') {
+      this.center()
     } else if (e.key === '[' || e.key === 'z') {
       this.size(-1)
     } else if (e.key === ']' || e.key === 'x') {
@@ -267,7 +269,7 @@ function Noodle () {
       this.move(1, 0, e.shiftKey)
     } else if (e.key === 'ArrowLeft' || e.key === 'a') {
       this.move(-1, 0, e.shiftKey)
-    } else if (e.key === 'Escape' || e.key === 'q') {
+    } else if (e.key === 'Escape') {
       this.center()
       this.filter(_correct)
     } else if (e.key === 'Tab') {

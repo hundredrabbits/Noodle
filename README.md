@@ -22,6 +22,8 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 - `shift-click` color/white.
 - `shift-del` clear all.
 - `arrows` move viewport.
+- `tab` cleanup edges.
+- `esc` cleanup colors.
 
 ### Specials
 
