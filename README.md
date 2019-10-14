@@ -11,9 +11,10 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 - `1` trace mode.
 - `2` tone mode.
 - `3` block mode.
-- `4` hor mode.
-- `5` ver mode.
-- `6` dot mode.
+- `4` circle mode.
+- `5` hor mode.
+- `6` ver mode.
+- `7` dot mode.
 - `0` drag mode.
 
 ### Controls

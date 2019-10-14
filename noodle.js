@@ -138,6 +138,22 @@ function Noodle () {
     }
   }
 
+  this.circle = (a, b) => {
+    let r = Math.floor(cursor.size / 2)
+    let x = -r
+    let y = 0
+    let err = 2 - 2 * r
+    do {
+      this.pixel(b.x - x, b.y + y)
+      this.pixel(b.x - y, b.y - x)
+      this.pixel(b.x + x, b.y - y)
+      this.pixel(b.x + y, b.y + x)
+      r = err
+      if (r <= y) err += ++y * 2 + 1
+      if (r > x || err > y) err += ++x * 2 + 1
+    } while (x < 0)
+  }
+
   this.pixel = (x, y) => {
     this.context.fillRect(Math.floor(x), Math.floor(y), 1, 1)
   }
@@ -242,12 +258,14 @@ function Noodle () {
     } else if (e.key === '3') {
       this.set('block')
     } else if (e.key === '4') {
-      this.set('hor')
+      this.set('circle')
     } else if (e.key === '5') {
-      this.set('ver')
+      this.set('hor')
     } else if (e.key === '6') {
-      this.set('dot')
+      this.set('ver')
     } else if (e.key === '7') {
+      this.set('dot')
+    } else if (e.key === '8') {
       this.set('deco')
     } else if (e.key === '0') {
       this.set('drag')
