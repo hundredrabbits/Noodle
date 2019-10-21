@@ -34,6 +34,7 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 - `z` decr brush size.
 - `x` incr brush size.
 - `q` center.
+- `o` open.
 - `w` move up.
 - `a` move left.
 - `s` move down.

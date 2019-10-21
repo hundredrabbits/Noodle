@@ -68,6 +68,8 @@ function Noodle () {
   }
 
   this.draw = (file) => {
+    if (!file) { console.warn('No file to draw'); return }
+    if (file.type !== 'image/png' && file.type !== 'image/jpeg') { console.warn('File is not jpg/png'); return }
     const img = new Image()
     img.onload = () => {
       this.context.drawImage(img, 0, 0)
@@ -212,6 +214,15 @@ function Noodle () {
     this.el.setAttribute('style', `left:${parseInt(this.offset.x)}px;top:${-parseInt(this.offset.y)}px`)
   }
 
+  this.open = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.onchange = e => {
+      this.draw(e.target.files[0])
+    }
+    input.click()
+  }
+
   // Events
 
   this.onMouseDown = (e) => {
@@ -275,6 +286,8 @@ function Noodle () {
       this.flip()
     } else if (e.key === 'q') {
       this.center()
+    } else if (e.key === 'o') {
+      this.open()
     } else if (e.key === '[' || e.key === 'z') {
       this.size(-1)
     } else if (e.key === ']' || e.key === 'x') {
@@ -349,7 +362,7 @@ function Noodle () {
     const link = document.createElement('a')
     link.setAttribute('href', base64)
     link.setAttribute('download', name)
-    link.dispatchEvent(new MouseEvent(`click`, { bubbles: true, cancelable: true, view: window }))
+    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }))
   }
 
   function step (val, len) {
