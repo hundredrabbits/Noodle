@@ -318,7 +318,7 @@ function Noodle () {
     } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta' || e.key === 'Escape') {
       this.set('trace')
     } else if (e.key === 'e') {
-      grab(this.el.toDataURL('image/png'))
+      grab(this.el.toDataURL('image/png'), `noodle${timestamp()}.png`)
     }
     this.context.fillStyle = cursor.color
   }
@@ -347,7 +347,7 @@ function Noodle () {
 
   this.onUnload = (e) => {
     if (this.tainted !== true) { return }
-    const confirmationMessage = '\o/';
+    const confirmationMessage = 'o/';
     (e || window.event).returnValue = confirmationMessage
     return confirmationMessage
   }
@@ -435,5 +435,9 @@ function Noodle () {
     if (x < 0 || x > w || y < 0 || y > h) { return false }
     const id = ((y * w) + (x % w)) * 4
     return [data[id], data[id + 1], data[id + 2]]
+  }
+
+  function timestamp () {
+    return new Date().toISOString().slice(0, 10).replace(/-/g, '').trim()
   }
 }
