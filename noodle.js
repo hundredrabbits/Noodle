@@ -447,7 +447,7 @@ function Noodle () {
 
   function timestamp (d = new Date(), e = new Date(d)) {
     const ms = e - d.setHours(0, 0, 0, 0)
-    return (ms / 8640 / 10000).toFixed(6).substr(2,6)
+    return (ms / 8640 / 10000).toFixed(6).substr(2, 6)
   }
 
   // Utils
