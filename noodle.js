@@ -49,6 +49,7 @@ function Noodle () {
     this.controller.set('Filter', 'Correct', 'Escape', () => { this.filter(_correct) })
     this.controller.set('Filter', 'Clean', 'Tab', () => { this.filter(_jagged) })
 
+    console.log(timestamp())
     console.log(`${this.controller}`)
   }
 
@@ -444,8 +445,9 @@ function Noodle () {
     return [data[id], data[id + 1], data[id + 2]]
   }
 
-  function timestamp () {
-    return new Date().toISOString().slice(0, 10).replace(/-/g, '').trim()
+  function timestamp (d = new Date(), e = new Date(d)) {
+    const ms = e - d.setHours(0, 0, 0, 0)
+    return (ms / 8640 / 10000).toFixed(6).substr(2,6)
   }
 
   // Utils
