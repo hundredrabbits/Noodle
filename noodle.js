@@ -26,7 +26,7 @@ function Noodle () {
     window.addEventListener('beforeunload', this.onUnload, false)
   }
 
-  this.start = function (w = window.innerWidth - 15, h = window.innerHeight - 15) {
+  this.start = function (w, h) {
     this.resize(w, h)
     this.fill()
     this.set('trace')

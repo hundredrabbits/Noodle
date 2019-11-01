@@ -4,6 +4,10 @@ We could not find a decent webpage to draw quick line doodles, so here's one.
 
 <img src='https://raw.githubusercontent.com/hundredrabbits/Noodle/master/PREVIEW.jpg' width="600"/>
 
+## Canvas Size
+
+To create a canvas of a specific size, use the url hash, like `index.html#720x405`
+
 ## Controls
 
 ### Sticky Modes
