@@ -229,16 +229,16 @@ function Noodle () {
     cursor.a.y = b.y
   }
 
-  this.move = (x, y, leap = false) => {
-    this.offset.x -= x * 50
-    this.offset.y -= y * 50
-    this.el.setAttribute('style', `left:${this.offset.x}px;top:${-this.offset.y}px`)
+  this.move = (x, y) => {
+    this.offset.x -= Math.floor(x * 50)
+    this.offset.y -= Math.floor(y * 50)
+    this.el.setAttribute('style', `transform:translate(${this.offset.x}px,${-this.offset.y}px)`)
   }
 
   this.center = () => {
-    this.offset.x = (window.innerWidth - this.el.width) / 2
-    this.offset.y = -(window.innerHeight - this.el.height) / 2
-    this.el.setAttribute('style', `left:${parseInt(this.offset.x)}px;top:${-parseInt(this.offset.y)}px`)
+    this.offset.x = Math.floor((window.innerWidth - this.el.width) / 2)
+    this.offset.y = Math.floor(-(window.innerHeight - this.el.height) / 2)
+    this.el.setAttribute('style', `transform:translate(${this.offset.x}px,${-this.offset.y}px)`)
   }
 
   this.import = () => {
