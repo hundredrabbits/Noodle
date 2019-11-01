@@ -24,6 +24,32 @@ function Noodle () {
     window.addEventListener('drop', this.onDrop, false)
     window.addEventListener('paste', this.onPaste, false)
     window.addEventListener('beforeunload', this.onUnload, false)
+
+    this.controller.set('Move', 'Move up', 'w', () => { this.move(0, 1) })
+    this.controller.set('Move', 'Move down', 's', () => { this.move(0, -1) })
+    this.controller.set('Move', 'Move left', 'a', () => { this.move(-1, 0) })
+    this.controller.set('Move', 'Move right', 'd', () => { this.move(1, 0) })
+    this.controller.set('Move', 'Center', 'q', () => { this.center() })
+    this.controller.set('Mode', 'Use trace', '1', () => { this.set('trace') })
+    this.controller.set('Mode', 'Use tone', '2', () => { this.set('tone') })
+    this.controller.set('Mode', 'Use block', '3', () => { this.set('block') })
+    this.controller.set('Mode', 'Use circle', '4', () => { this.set('circle') })
+    this.controller.set('Mode', 'Use hor', '5', () => { this.set('hor') })
+    this.controller.set('Mode', 'Use ver', '6', () => { this.set('ver') })
+    this.controller.set('Mode', 'Use dot', '7', () => { this.set('dot') })
+    this.controller.set('Mode', 'Use deco', '8', () => { this.set('deco') })
+    this.controller.set('Brush', 'Increase Size', 'z', () => { this.size(-1) })
+    this.controller.set('Brush', 'Decrease Size', 'x', () => { this.size(1) })
+    this.controller.set('Brush', 'Erase', 'Shift', () => { this.color('white') }, () => { this.color('black') })
+    this.controller.set('Brush', 'Drag', 'Alt', () => { this.set('drag') }, () => { this.set('trace') })
+    this.controller.set('Effect', 'Invert', 'i', () => { this.invert() })
+    this.controller.set('Effect', 'Flip', 'f', () => { this.flip() })
+    this.controller.set('File', 'Import', 'o', () => { this.import() })
+    this.controller.set('File', 'Export', 'e', () => { this.export() })
+    this.controller.set('Filter', 'Correct', 'Escape', () => { this.filter(_correct) })
+    this.controller.set('Filter', 'Clean', 'Tab', () => { this.filter(_jagged) })
+
+    console.log(`${this.controller}`)
   }
 
   this.start = function (w, h) {
@@ -104,6 +130,7 @@ function Noodle () {
 
   this.color = (color) => {
     cursor.color = color
+    this.context.fillStyle = cursor.color
     this.update()
   }
 
@@ -203,8 +230,8 @@ function Noodle () {
   }
 
   this.move = (x, y, leap = false) => {
-    this.offset.x -= x * (leap ? 100 : 50)
-    this.offset.y -= y * (leap ? 100 : 50)
+    this.offset.x -= x * 50
+    this.offset.y -= y * 50
     this.el.setAttribute('style', `left:${this.offset.x}px;top:${-this.offset.y}px`)
   }
 
@@ -214,13 +241,17 @@ function Noodle () {
     this.el.setAttribute('style', `left:${parseInt(this.offset.x)}px;top:${-parseInt(this.offset.y)}px`)
   }
 
-  this.open = () => {
+  this.import = () => {
     const input = document.createElement('input')
     input.type = 'file'
     input.onchange = e => {
       this.draw(e.target.files[0])
     }
     input.click()
+  }
+
+  this.export = () => {
+    grab(this.el.toDataURL('image/png'), `noodle${timestamp()}.png`)
   }
 
   // Events
@@ -258,69 +289,17 @@ function Noodle () {
   }
 
   this.onKeyDown = (e) => {
-    if (e.key === 'Shift') {
-      this.color('white')
-    } else if (e.key === 'Alt') {
-      this.set('drag')
-    } else if (e.key === '1') {
-      this.set('trace')
-    } else if (e.key === '2') {
-      this.set('tone')
-    } else if (e.key === '3') {
-      this.set('block')
-    } else if (e.key === '4') {
-      this.set('circle')
-    } else if (e.key === '5') {
-      this.set('hor')
-    } else if (e.key === '6') {
-      this.set('ver')
-    } else if (e.key === '7') {
-      this.set('dot')
-    } else if (e.key === '8') {
-      this.set('deco')
-    } else if (e.key === '0') {
-      this.set('drag')
-    } else if (e.key === 'i') {
-      this.invert()
-    } else if (e.key === 'f') {
-      this.flip()
-    } else if (e.key === 'q') {
-      this.center()
-    } else if (e.key === 'o') {
-      this.open()
-    } else if (e.key === '[' || e.key === 'z') {
-      this.size(-1)
-    } else if (e.key === ']' || e.key === 'x') {
-      this.size(1)
-    } else if (e.key === 'ArrowDown' || e.key === 's') {
-      this.move(0, -1, e.shiftKey)
-    } else if (e.key === 'ArrowUp' || e.key === 'w') {
-      this.move(0, 1, e.shiftKey)
-    } else if (e.key === 'ArrowRight' || e.key === 'd') {
-      this.move(1, 0, e.shiftKey)
-    } else if (e.key === 'ArrowLeft' || e.key === 'a') {
-      this.move(-1, 0, e.shiftKey)
-    } else if (e.key === 'Escape') {
-      this.center()
-      this.filter(_correct)
-    } else if (e.key === 'Tab') {
-      this.filter(_jagged)
-      e.preventDefault()
-    }
-    this.context.fillStyle = cursor.color
+    const fn = this.controller.get(e.key, true)
+    if (!fn) { return }
+    fn(e)
+    e.preventDefault()
   }
 
   this.onKeyUp = (e) => {
-    if (e.key === 'Shift') {
-      this.color('black')
-    } else if (e.key === 'Backspace' && e.shiftKey === true) {
-      this.fill()
-    } else if (e.key === 'Alt' || e.key === 'Control' || e.key === 'Meta' || e.key === 'Escape') {
-      this.set('trace')
-    } else if (e.key === 'e') {
-      grab(this.el.toDataURL('image/png'), `noodle${timestamp()}.png`)
-    }
-    this.context.fillStyle = cursor.color
+    const fn = this.controller.get(e.key, false)
+    if (!fn) { return }
+    fn(e)
+    e.preventDefault()
   }
 
   this.onDrop = (e) => {
@@ -358,19 +337,47 @@ function Noodle () {
     return false
   }
 
-  function grab (base64, name = 'export.png') {
-    const link = document.createElement('a')
-    link.setAttribute('href', base64)
-    link.setAttribute('download', name)
-    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }))
-  }
+  // Controls
 
-  function step (val, len) {
-    return parseInt(val / len) * len
-  }
+  this.controller = {
+    all: {
 
-  function snap (pos) {
-    return { x: step(pos.x + (cursor.size / 2), cursor.size), y: step(pos.y + (cursor.size / 2), cursor.size) }
+    },
+    set: (type, info, key, downfn, upfn) => {
+      this.controller.all[key] = { type, info, downfn, upfn, key }
+    },
+    get: (key, down) => {
+      return !this.controller.all[key] ? null : down ? this.controller.all[key].downfn : this.controller.all[key].upfn
+    },
+    sort: () => {
+      const h = {}
+      for (const item of Object.values(this.controller.all)) {
+        if (!h[item.type]) { h[item.type] = [] }
+        h[item.type].push(item)
+      }
+      return h
+    },
+    toString: () => {
+      const types = this.controller.sort()
+      let text = ''
+      for (const type in types) {
+        for (const item of types[type]) {
+          text += `${item.key} ${item.info}\n`
+        }
+      }
+      return text.trim()
+    },
+    toMarkdown: () => {
+      const types = this.controller.sort()
+      let text = ''
+      for (const type in types) {
+        text += `\n### ${type}\n\n`
+        for (const item of types[type]) {
+          text += `- \`${item.key}\`: ${item.info}\n`
+        }
+      }
+      return text.trim()
+    }
   }
 
   // Textures
@@ -439,5 +446,22 @@ function Noodle () {
 
   function timestamp () {
     return new Date().toISOString().slice(0, 10).replace(/-/g, '').trim()
+  }
+
+  // Utils
+
+  function grab (base64, name = 'export.png') {
+    const link = document.createElement('a')
+    link.setAttribute('href', base64)
+    link.setAttribute('download', name)
+    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }))
+  }
+
+  function step (val, len) {
+    return parseInt(val / len) * len
+  }
+
+  function snap (pos) {
+    return { x: step(pos.x + (cursor.size / 2), cursor.size), y: step(pos.y + (cursor.size / 2), cursor.size) }
   }
 }

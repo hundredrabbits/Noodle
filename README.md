@@ -10,44 +10,46 @@ To create a canvas of a specific size, use the url hash, like `index.html#720x40
 
 ## Controls
 
-### Sticky Modes
+### Mode
 
-- `1` trace mode.
-- `2` tone mode.
-- `3` block mode.
-- `4` circle mode.
-- `5` hor mode.
-- `6` ver mode.
-- `7` dot mode.
-- `0` drag mode.
+- `1`: Use trace
+- `2`: Use tone
+- `3`: Use block
+- `4`: Use circle
+- `5`: Use hor
+- `6`: Use ver
+- `7`: Use dot
+- `8`: Use deco
 
-### Controls
+### Move
 
-- `click` color/black.
-- `shift-click` color/white.
-- `shift-del` clear all.
-- `arrows` move viewport.
-- `tab` cleanup edges.
-- `esc` cleanup colors.
+- `w`: Move up
+- `s`: Move down
+- `a`: Move left
+- `d`: Move right
+- `q`: Center
 
-### Specials
+### Brush
 
-- `i` invert.
-- `f` flip.
-- `e` export.
-- `z` decr brush size.
-- `x` incr brush size.
-- `q` center.
-- `o` open.
-- `w` move up.
-- `a` move left.
-- `s` move down.
-- `d` move right.
+- `z`: Increase Size
+- `x`: Decrease Size
+- `Shift`: Erase
+- `Alt`: Drag
 
-## IO
+### Effect
 
-- To export an image file, simply press `e`.
-- To import an image file, simply copy it from your system and paste it in the browser window, or drag it from your desktop to the browser window.
+- `i`: Invert
+- `f`: Flip
+
+### File
+
+- `o`: Import
+- `e`: Export
+
+### Filter
+
+- `Escape`: Correct
+- `Tab`: Clean
 
 ## Ecosystem
 
