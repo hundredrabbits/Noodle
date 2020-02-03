@@ -31,8 +31,8 @@ To create a canvas of a specific size, use the url hash, like `index.html#720x40
 
 ### Brush
 
-- `z`: Increase Size
-- `x`: Decrease Size
+- `x`: Increase Size
+- `z`: Decrease Size
 - `Shift`: Erase
 - `Alt`: Drag
 
