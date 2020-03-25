@@ -56,7 +56,7 @@ function Client () {
     this.acels.set('Mode', 'Deco', '8', () => { this.set('deco') })
     this.acels.set('Brush', 'Increase Size', 'Z', () => { this.size(-1) })
     this.acels.set('Brush', 'Decrease Size', 'X', () => { this.size(1) })
-    this.acels.set('Brush', 'Erase', 'Shift', () => { this.color('white') }, () => { this.color('black') })
+    this.acels.set('Brush', 'Erase', 'Shift', () => { })
     this.acels.set('Brush', 'Drag', 'Alt', () => { this.set('drag') }, () => { this.set('trace') })
     this.acels.set('Effect', 'Invert', 'I', () => { this.invert() })
     this.acels.set('Effect', 'Flip', 'F', () => { this.flip() })
@@ -268,25 +268,13 @@ function Client () {
     this.el.setAttribute('style', `transform:translate(${this.offset.x}px,${-this.offset.y}px)`)
   }
 
-  this.import = () => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.onchange = e => {
-      this.draw(e.target.files[0])
-    }
-    input.click()
-  }
-
-  this.export = () => {
-    grab(this.el.toDataURL('image/png'), `noodle${timestamp()}.png`)
-  }
-
   // Events
 
   this.onMouseDown = (e) => {
     cursor.z = 1
     cursor.a.x = (e.clientX || e.touches[0].clientX) - this.offset.x
     cursor.a.y = (e.clientY || e.touches[0].clientY) + this.offset.y
+    this.color(e.shiftKey === true ? 'white' : 'black')
     if (e.button > 1) {
       this.set('line')
     }
@@ -414,19 +402,7 @@ function Client () {
     return [data[id], data[id + 1], data[id + 2]]
   }
 
-  function timestamp (d = new Date(), e = new Date(d)) {
-    const ms = e - d.setHours(0, 0, 0, 0)
-    return (ms / 8640 / 10000).toFixed(6).substr(2, 6)
-  }
-
   // Utils
-
-  function grab (base64, name = 'export.png') {
-    const link = document.createElement('a')
-    link.setAttribute('href', base64)
-    link.setAttribute('download', name)
-    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }))
-  }
 
   function step (val, len) {
     return parseInt(val / len) * len

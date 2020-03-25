@@ -1,5 +1,5 @@
 * { margin:0;padding:0;border:0;outline:0; }
-body { overflow: hidden; background:#000 }
+body { overflow: hidden; background:#000; transition: background 1.5s ; }
 canvas { image-rendering: pixelated; image-rendering: optimizeSpeed; transition: transform 0.1s }
 
 /* Font */
@@ -24,3 +24,7 @@ canvas { image-rendering: pixelated; image-rendering: optimizeSpeed; transition:
 #acels > li > ul > li { padding: 0px 10px; display: block }
 #acels > li > ul > li:hover { background: #ccc; }
 #acels > li > ul > li > i { display: inline-block; float: right; color: #aaa; }
+
+/* Theme */
+
+body { background:var(--background) }
