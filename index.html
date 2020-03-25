@@ -417,7 +417,7 @@ function Client () {
     this.context.restore()
   }
   this.fit = () => {
-    this.resize(window.innerWidth - 60, window.innerHeight - 60)
+    this.resize(window.innerWidth, window.innerHeight)
   }
   this.resize = (w, h) => {
     document.location.hash = `#${w}x${h}`

@@ -89,7 +89,7 @@ function Client () {
   }
 
   this.fit = () => {
-    this.resize(window.innerWidth - 60, window.innerHeight - 60)
+    this.resize(window.innerWidth, window.innerHeight)
   }
 
   this.resize = (w, h) => {
