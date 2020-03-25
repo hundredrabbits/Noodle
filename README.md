@@ -1,58 +1,43 @@
-# Noodle
+NOODLE
+
+---------------
 
 We could not find a decent webpage to draw quick line doodles, so here's one.
+To create a canvas of a specific size, use the url hash, like index.html#720x405
 
-<img src='https://raw.githubusercontent.com/hundredrabbits/Noodle/master/PREVIEW.jpg' width="600"/>
+Controls
 
-## Canvas Size
+∷        Toggle Menubar   Tab
+∷        Open Theme       ^Shift+O
+∷        Reset Theme      ^Backspace
+File     New              ^N
+File     New(fit)         ^Shift+N
+File     Import           ^O
+File     Export           ^S
+Filter   Correct          Escape
+Filter   Clean            Space
+Move     Move up          W
+Move     Move down        S
+Move     Move left        A
+Move     Move right       D
+Move     Center           Q
+Mode     Trace            1
+Mode     Tone             2
+Mode     Block            3
+Mode     Circle           4
+Mode     Horizontal line  5
+Mode     Vertical line    6
+Mode     Dot              7
+Mode     Deco             8
+Brush    Increase Size    Z
+Brush    Decrease Size    X
+Brush    Erase            Shift
+Brush    Drag             Alt
+Effect   Invert           I
+Effect   Flip             F
 
-To create a canvas of a specific size, use the url hash, like `index.html#720x405`
+Extras
 
-## Controls
-
-### Mode
-
-- `1`: Use trace
-- `2`: Use tone
-- `3`: Use block
-- `4`: Use circle
-- `5`: Use hor
-- `6`: Use ver
-- `7`: Use dot
-- `8`: Use deco
-
-### Move
-
-- `w`: Move up
-- `s`: Move down
-- `a`: Move left
-- `d`: Move right
-- `q`: Center
-
-### Brush
-
-- `z`: Increase Size
-- `x`: Decrease Size
-- `Shift`: Erase
-- `Alt`: Drag
-
-### Effect
-
-- `i`: Invert
-- `f`: Flip
-
-### File
-
-- `o`: Import
-- `e`: Export
-
-### Filter
-
-- `Escape`: Correct
-- `Tab`: Clean
-
-## Ecosystem
-
-- [Poodle](https://hundredrabbits.github.io/Poodle/), scene
-- [Noodle](https://hundredrabbits.github.io/Noodle/), sketch
-- [Moogle](https://hundredrabbits.github.io/Moogle/), crop
+- Themes: https://github.com/hundredrabbits/Themes
+- Support: https://patreon.com/100
+- Pull Requests are welcome!
