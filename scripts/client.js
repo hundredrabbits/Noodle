@@ -299,7 +299,8 @@ function Client () {
   }
 
   this.drawZoe = (byteArray) => {
-    const size = Math.sqrt(byteArray.length * 8)
+    const size = Math.floor(Math.sqrt(byteArray.length * 8))
+    this.resize(size, size)
     for (var y = 0; y < size; y++) {
       for (var x = 0; x < size; x++) {
         const key = x + (y * size)
