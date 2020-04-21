@@ -375,7 +375,7 @@ function Client () {
     this.acels.set('File', 'Import .png', 'CmdOrCtrl+O', () => { this.source.open('png', this.draw) })
     this.acels.set('File', 'Import .zoe', 'CmdOrCtrl+Shift+O', () => { this.source.open('zoe', this.unpack) })
     this.acels.set('File', 'Export .png', 'CmdOrCtrl+S', () => { this.source.write('noodle', 'png', this.el.toDataURL('image/png', 1.0), 'image/png') })
-    this.acels.set('File', 'Export .zoe', 'CmdOrCtrl+Shift+S', () => { download('sprite.zoe', this.pack(this.context, this.el.width, this.el.height), 'octect/stream') })
+    this.acels.set('File', 'Export .zoe', 'CmdOrCtrl+Shift+S', () => { download('sprite.zoe', zoeRead(this.context, this.el.width, this.el.height), 'octect/stream') })
     this.acels.set('Filter', 'Correct', 'Escape', () => { this.filter(_correct) })
     this.acels.set('Filter', 'Clean', 'Space', () => { this.filter(_jagged) })
     this.acels.set('Move', 'Move up', 'W', () => { this.move(0, 1) })
@@ -572,19 +572,6 @@ function Client () {
     this.offset.y = Math.floor(-(window.innerHeight - this.el.height) / 2)
     this.el.setAttribute('style', `transform:translate(${this.offset.x}px,${-this.offset.y}px)`)
   }
-  this.pack = (ctx, w, h) => {
-    const size = w > h ? w : h
-    const byteArray = new Uint8Array((size * size) / 8)
-    const data = ctx.getImageData(0, 0, w, h).data
-    const vals = [128, 64, 32, 16, 8, 4, 2, 1]
-    for (var i = 0, n = data.length; i < n; i += 4) {
-      const key = Math.floor(i / 32)
-      const val = vals[(i / 4) % 8]
-      const rgb = [data[i], data[i + 1], data[i + 2]]
-      byteArray[key] += val * (lum(rgb) < 127 ? 1 : 0)
-    }
-    return byteArray
-  }
   this.unpack = (file) => {
     if (!file) { return }
     const start = 0
@@ -592,25 +579,14 @@ function Client () {
     const reader = new FileReader()
     reader.onloadend = (e) => {
       if (e.target.readyState === FileReader.DONE) {
-        this.drawZoe(new Uint8Array(e.target.result))
+        const byteArray = new Uint8Array(e.target.result)
+        const size = Math.floor(Math.sqrt(byteArray.length * 8))
+        this.resize(size, size)
+        zoeWrite(this.context, byteArray)
       }
     }
     const blob = file.slice(start, stop + 1)
     reader.readAsArrayBuffer(blob)
-  }
-  this.drawZoe = (byteArray) => {
-    const size = Math.floor(Math.sqrt(byteArray.length * 8))
-    this.resize(size, size)
-    for (var y = 0; y < size; y++) {
-      for (var x = 0; x < size; x++) {
-        const key = x + (y * size)
-        const byteId = Math.floor(key / 8)
-        const byteTarget = byteArray[byteId]
-        const value = ('000000000' + byteTarget.toString(2)).substr(-8)[key % 8]
-        this.color(value === '0' ? 'white' : 'black')
-        this.pixel(x, y)
-      }
-    }
   }
   this.onMouseDown = (e) => {
     cursor.z = 1
@@ -736,6 +712,33 @@ function Client () {
       pom.dispatchEvent(event)
     } else {
       pom.click()
+    }
+  }
+  function zoeRead (ctx, w, h, x, y) {
+    const size = w > h ? w : h
+    const byteArray = new Uint8Array((size * size) / 8)
+    const data = ctx.getImageData(x || 0, y || 0, w, h).data
+    const vals = [128, 64, 32, 16, 8, 4, 2, 1]
+    for (var i = 0, n = data.length; i < n; i += 4) {
+      const key = Math.floor(i / 32)
+      const val = vals[(i / 4) % 8]
+      const rgb = [data[i], data[i + 1], data[i + 2]]
+      byteArray[key] += val * (lum(rgb) < 127 ? 1 : 0)
+    }
+    return byteArray
+  }
+  function zoeWrite (ctx, byteArray) {
+    const size = Math.floor(Math.sqrt(byteArray.length * 8))
+    const vals = [128, 64, 32, 16, 8, 4, 2, 1]
+    for (var y = 0; y < size; y++) {
+      for (var x = 0; x < size; x++) {
+        const key = x + (y * size)
+        const byteId = Math.floor(key / 8)
+        const byteTarget = byteArray[byteId]
+        const mask = vals[key % 8]
+        ctx.fillStyle = (byteTarget & mask) !== 0 ? 'black' : 'white'
+        ctx.fillRect(x, y, 1, 1)
+      }
     }
   }
 }
