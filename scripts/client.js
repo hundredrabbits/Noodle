@@ -468,10 +468,9 @@ function Client () {
     for (var y = 0; y < size; y++) {
       for (var x = 0; x < size; x++) {
         const key = x + (y * size)
-        const byteId = Math.floor(key / 8)
-        const byteTarget = byteArray[byteId]
+        const byte = byteArray[Math.floor(key / 8)]
         const mask = vals[key % 8]
-        ctx.fillStyle = (byteTarget & mask) !== 0 ? 'black' : 'white'
+        ctx.fillStyle = (byte & mask) !== 0 ? 'black' : 'white'
         ctx.fillRect(x, y, 1, 1)
       }
     }
