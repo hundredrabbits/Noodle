@@ -13,6 +13,7 @@ function Client () {
   this.acels = new Acels(this)
   this.theme = new Theme(this)
   this.source = new Source(this)
+  this.zoe = new Zoe(this)
 
   this.install = function (host) {
     console.info('Client', 'Installing..')
@@ -38,7 +39,8 @@ function Client () {
     this.acels.set('File', 'New', 'CmdOrCtrl+N', () => { this.fill() })
     this.acels.set('File', 'New(fit)', 'CmdOrCtrl+Shift+N', () => { this.fit() })
     this.acels.set('File', 'Import', 'CmdOrCtrl+O', () => { this.source.open('png', this.draw) })
-    this.acels.set('File', 'Export', 'CmdOrCtrl+S', () => { this.source.write('noodle', 'png', this.el.toDataURL('image/png', 1.0), 'image/png') })
+    this.acels.set('File', 'Export .png', 'CmdOrCtrl+S', () => { this.source.write('noodle', 'png', this.el.toDataURL('image/png', 1.0), 'image/png') })
+    this.acels.set('File', 'Export .zoe', 'CmdOrCtrl+Shift+S', () => { this.pack() })
     this.acels.set('Filter', 'Correct', 'Escape', () => { this.filter(_correct) })
     this.acels.set('Filter', 'Clean', 'Space', () => { this.filter(_jagged) })
     this.acels.set('Move', 'Move up', 'W', () => { this.move(0, 1) })
@@ -70,8 +72,8 @@ function Client () {
     console.info(`${this.acels}`)
 
     const size = window.location.hash.substr(1)
-    const width = size.indexOf('x') > 2 ? parseInt(size.split('x')[0]) : window.innerWidth
-    const height = size.indexOf('x') > 2 ? parseInt(size.split('x')[1]) : window.innerHeight
+    const width = size.indexOf('x') > 1 ? parseInt(size.split('x')[0]) : window.innerWidth
+    const height = size.indexOf('x') > 1 ? parseInt(size.split('x')[1]) : window.innerHeight
 
     this.theme.start()
     this.acels.start()
@@ -266,6 +268,26 @@ function Client () {
     this.offset.x = Math.floor((window.innerWidth - this.el.width) / 2)
     this.offset.y = Math.floor(-(window.innerHeight - this.el.height) / 2)
     this.el.setAttribute('style', `transform:translate(${this.offset.x}px,${-this.offset.y}px)`)
+  }
+
+  this.pack = () => {
+    const limit = (Math.ceil(this.el.width / 8.0) * 8) * (Math.ceil(this.el.height / 8.0) * 8)
+    const a = new Uint8Array(limit / 8)
+
+    console.log(`${this.el.width}x${this.el.height}=${limit} pixels`)
+    console.log(`${limit / 8} bytes`)
+
+    const data = this.context.getImageData(0, 0, this.el.width, this.el.height).data // select 4x4
+    const byte = [128, 64, 32, 16, 8, 4, 2, 1]
+
+    // check every 8 pixels, each pixel has 4 values
+    for (var i = 0, n = data.length; i < n; i += 4) {
+      const key = Math.floor(i / 32)
+      const val = byte[(i / 4) % 8]
+      const rgb = [data[i], data[i + 1], data[i + 2]]
+      a[key] += val * (lum(rgb) < 127 ? 1 : 0)
+    }
+    console.log(a)
   }
 
   // Events
