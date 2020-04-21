@@ -13,7 +13,6 @@ function Client () {
   this.acels = new Acels(this)
   this.theme = new Theme(this)
   this.source = new Source(this)
-  this.zoe = new Zoe(this)
 
   this.install = function (host) {
     console.info('Client', 'Installing..')
@@ -34,13 +33,14 @@ function Client () {
     window.addEventListener('beforeunload', this.onUnload, false)
 
     this.acels.set('∷', 'Toggle Menubar', 'Tab', () => { this.acels.toggle() })
-    this.acels.set('∷', 'Open Theme', 'CmdOrCtrl+Shift+O', () => { this.theme.open() })
+    this.acels.set('∷', 'Open Theme', '', () => { this.theme.open() })
     this.acels.set('∷', 'Reset Theme', 'CmdOrCtrl+Backspace', () => { this.theme.reset() })
     this.acels.set('File', 'New', 'CmdOrCtrl+N', () => { this.fill() })
     this.acels.set('File', 'New(fit)', 'CmdOrCtrl+Shift+N', () => { this.fit() })
-    this.acels.set('File', 'Import', 'CmdOrCtrl+O', () => { this.source.open('png', this.draw) })
+    this.acels.set('File', 'Import .png', 'CmdOrCtrl+O', () => { this.source.open('png', this.draw) })
+    this.acels.set('File', 'Import .zoe', 'CmdOrCtrl+Shift+O', () => { this.source.open('zoe', this.unpack) })
     this.acels.set('File', 'Export .png', 'CmdOrCtrl+S', () => { this.source.write('noodle', 'png', this.el.toDataURL('image/png', 1.0), 'image/png') })
-    this.acels.set('File', 'Export .zoe', 'CmdOrCtrl+Shift+S', () => { this.pack() })
+    this.acels.set('File', 'Export .zoe', 'CmdOrCtrl+Shift+S', () => { download('sprite.zoe', this.pack(this.context, this.el.width, this.el.height), 'octect/stream') })
     this.acels.set('Filter', 'Correct', 'Escape', () => { this.filter(_correct) })
     this.acels.set('Filter', 'Clean', 'Space', () => { this.filter(_jagged) })
     this.acels.set('Move', 'Move up', 'W', () => { this.move(0, 1) })
@@ -124,7 +124,7 @@ function Client () {
 
   this.draw = (file) => {
     if (!file) { console.warn('No file to draw'); return }
-    if (file.type !== 'image/png' && file.type !== 'image/jpeg') { console.warn('File is not jpg/png'); return }
+    if (file.type !== 'image/png' && file.type !== 'image/jpeg') { return }
     const img = new Image()
     img.onload = () => {
       this.context.drawImage(img, 0, 0)
@@ -270,24 +270,45 @@ function Client () {
     this.el.setAttribute('style', `transform:translate(${this.offset.x}px,${-this.offset.y}px)`)
   }
 
-  this.pack = () => {
-    const limit = (Math.ceil(this.el.width / 8.0) * 8) * (Math.ceil(this.el.height / 8.0) * 8)
-    const a = new Uint8Array(limit / 8)
-
-    console.log(`${this.el.width}x${this.el.height}=${limit} pixels`)
-    console.log(`${limit / 8} bytes`)
-
-    const data = this.context.getImageData(0, 0, this.el.width, this.el.height).data // select 4x4
-    const byte = [128, 64, 32, 16, 8, 4, 2, 1]
-
-    // check every 8 pixels, each pixel has 4 values
+  this.pack = (ctx, w, h) => {
+    const byteArray = new Uint8Array(w * h / 8)
+    const data = ctx.getImageData(0, 0, w, h).data
+    const vals = [128, 64, 32, 16, 8, 4, 2, 1]
     for (var i = 0, n = data.length; i < n; i += 4) {
       const key = Math.floor(i / 32)
-      const val = byte[(i / 4) % 8]
+      const val = vals[(i / 4) % 8]
       const rgb = [data[i], data[i + 1], data[i + 2]]
-      a[key] += val * (lum(rgb) < 127 ? 1 : 0)
+      byteArray[key] += val * (lum(rgb) < 127 ? 1 : 0)
     }
-    console.log(a)
+    return byteArray
+  }
+
+  this.unpack = (file) => {
+    if (!file) { return }
+    const start = 0
+    const stop = file.size - 1
+    const reader = new FileReader()
+    reader.onloadend = (e) => {
+      if (e.target.readyState === FileReader.DONE) {
+        this.drawZoe(new Uint8Array(e.target.result))
+      }
+    }
+    const blob = file.slice(start, stop + 1)
+    reader.readAsArrayBuffer(blob)
+  }
+
+  this.drawZoe = (byteArray) => {
+    const size = Math.sqrt(byteArray.length * 8)
+    for (var y = 0; y < size; y++) {
+      for (var x = 0; x < size; x++) {
+        const key = x + (y * size)
+        const byteId = Math.floor(key / 8)
+        const byteTarget = byteArray[byteId]
+        const value = ('000000000' + byteTarget.toString(2)).substr(-8)[key % 8]
+        this.color(value === '0' ? 'white' : 'black')
+        this.pixel(x, y)
+      }
+    }
   }
 
   // Events
@@ -432,5 +453,20 @@ function Client () {
 
   function snap (pos) {
     return { x: step(pos.x + (cursor.size / 2), cursor.size), y: step(pos.y + (cursor.size / 2), cursor.size) }
+  }
+
+  function download (filename, byteArray, type) {
+    const blob = new Blob([byteArray], { type: type })
+    const url = window.URL.createObjectURL(blob)
+    const pom = document.createElement('a')
+    pom.setAttribute('href', url)
+    pom.setAttribute('download', filename)
+    if (document.createEvent) {
+      const event = document.createEvent('MouseEvents')
+      event.initEvent('click', true, true)
+      pom.dispatchEvent(event)
+    } else {
+      pom.click()
+    }
   }
 }
