@@ -278,8 +278,6 @@ function Client () {
     reader.onloadend = (e) => {
       if (e.target.readyState === FileReader.DONE) {
         const byteArray = new Uint8Array(e.target.result)
-        const size = Math.floor(Math.sqrt(byteArray.length * 8))
-        this.resize(size, size)
         zoeWrite(this.context, byteArray)
       }
     }
