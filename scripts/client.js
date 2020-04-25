@@ -95,6 +95,8 @@ function Client () {
   }
 
   this.resize = (w, h) => {
+    w = parseInt(w / 8) * 8
+    h = parseInt(h / 8) * 8
     document.location.hash = `#${w}x${h}`
     this.el.width = w
     this.el.height = h
