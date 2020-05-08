@@ -483,7 +483,7 @@ function Client () {
       if (!arrayBuffer) { return }
       const byteArray = new Uint8Array(arrayBuffer)
       for (let i = 0; i < uint8a.byteLength; i++) {
-        byteArray[6148 + i] = uint8a[i]
+        byteArray[6144 + i] = uint8a[i]
       }
       download('noodle.dsk', byteArray, 'octect/stream')
     }
