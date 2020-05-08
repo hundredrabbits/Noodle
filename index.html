@@ -376,6 +376,7 @@ function Client () {
     this.acels.set('File', 'Import .zoe', 'CmdOrCtrl+Shift+O', () => { this.source.open('zoe', this.unpack) })
     this.acels.set('File', 'Export .png', 'CmdOrCtrl+S', () => { this.source.write('noodle', 'png', this.el.toDataURL('image/png', 1.0), 'image/png') })
     this.acels.set('File', 'Export .zoe', 'CmdOrCtrl+Shift+S', () => { download('sprite.zoe', zoeRead(this.context, this.el.width, this.el.height), 'octect/stream') })
+    this.acels.set('File', 'Export .dsk', 'CmdOrCtrl+Alt+S', () => { insertDisk(zoeRead(this.context, this.el.width, this.el.height)) })
     this.acels.set('Filter', 'Correct', 'Escape', () => { this.filter(_correct) })
     this.acels.set('Filter', 'Clean', 'Space', () => { this.filter(_jagged) })
     this.acels.set('Move', 'Move up', 'W', () => { this.move(0, 1) })
@@ -736,6 +737,21 @@ function Client () {
       ctx.fillStyle = (byte & mask) !== 0 ? 'black' : 'white'
       ctx.fillRect((i - pad) % w, Math.floor((i - pad) / w), 1, 1)
     }
+  }
+  function insertDisk (uint8a) {
+    const xmlhttp = new XMLHttpRequest()
+    xmlhttp.open('GET', 'links/128.dsk', true)
+    xmlhttp.responseType = 'arraybuffer'
+    xmlhttp.onload = (oEvent) => {
+      const arrayBuffer = xmlhttp.response
+      if (!arrayBuffer) { return }
+      const byteArray = new Uint8Array(arrayBuffer)
+      for (let i = 0; i < uint8a.byteLength; i++) {
+        byteArray[6148 + i] = uint8a[i]
+      }
+      download('noodle.dsk', byteArray, 'octect/stream')
+    }
+    xmlhttp.send(null)
   }
 }
       const client = new Client()
